@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Owned font metric regression</title>
+<style>
+body { margin:16px; background:white; color:#111; font:22px Arial; }
+p { margin:8px 0; }
+.courier { font-family:"Courier New"; }
+.small { font-size:16px; }
+#mixed span { font-family:"Courier New"; }
+#transformed { transform:scale(1.2); transform-origin:left; }
+#zoomed { zoom:1.2; }
+#vertical { writing-mode:vertical-rl; }
+#pseudo::after { content:"g"; }
+input, textarea, select { font:22px Arial; }
+</style>
+<p id="arial" data-ergo-role="hud">Hg</p>
+<p id="courier" class="courier" data-ergo-role="hud">Hg</p>
+<p id="arial16" class="small" data-ergo-role="hud">Hg</p>
+<p id="courier16" class="small courier" data-ergo-role="hud">Hg</p>
+<p id="above" style="font-size:32px" data-ergo-role="hud">Hg</p>
+<p id="xonly" data-ergo-role="hud">xxx</p>
+<p id="mixed" data-ergo-role="hud">H<span>g</span></p>
+<p id="transformed" data-ergo-role="hud">Hg</p>
+<p id="zoomed" data-ergo-role="hud">Hg</p>
+<p id="vertical" data-ergo-role="hud">Hg</p>
+<p id="pseudo" data-ergo-role="hud">H</p>
+<p id="child-scale" data-ergo-role="hud">H<span style="display:inline-block;scale:1.2">g</span></p>
+<p id="child-rotate" data-ergo-role="hud">H<span style="display:inline-block;rotate:10deg">g</span></p>
+<p id="child-translate" data-ergo-role="hud">H<span style="display:inline-block;translate:0 2px">g</span></p>
+<p id="sensitive" data-sensitive data-ergo-role="hud">Hg</p>
+<div data-private><p id="private-descendant" data-ergo-role="hud">Hg</p></div>
+<p id="private-subtree" data-ergo-role="hud">H<span data-private>g</span></p>
+<p id="opted" data-ergo-role="hud">Hg</p>
+<p id="echo" data-ergo-role="hud">Hg</p>
+<p id="private" contenteditable="true" data-ergo-role="hud">Owned editable fixture</p>
+<input id="input" value="INPUT-PRIVATE-93485" aria-label="Owned input">
+<textarea id="textarea" aria-label="Owned textarea">TEXTAREA-PRIVATE-19458</textarea>
+<select id="select" aria-label="Owned select"><option value="SELECT-PRIVATE-94752">Owned option</option></select>
+</html>

@@ -1,0 +1,8 @@
+{
+  "run_id": "replay-1",
+  "scenario_digest": "98be8e0de9238b0e9c437a233b000f82b632111b28dd4df5ab7371bd9a5efda2",
+  "code_revision": "92cacc11123c9b7d582f7eac7aefd09da29eb51fe1e1495d032c1f44d410bf3d",
+  "kind": "network",
+  "unexpected_errors": [],
+  "fixture_notice": "No live telemetry collected."
+}

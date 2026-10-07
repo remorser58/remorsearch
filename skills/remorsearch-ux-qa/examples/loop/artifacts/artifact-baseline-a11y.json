@@ -1,0 +1,32 @@
+{
+  "run_id": "baseline-1",
+  "scenario_digest": "98be8e0de9238b0e9c437a233b000f82b632111b28dd4df5ab7371bd9a5efda2",
+  "code_revision": "a10023250bae9d7a89fef79340242ac4109845ee98eb7a37a763b265d6dab317",
+  "kind": "accessibility",
+  "results": [
+    {
+      "name": "keyboard",
+      "status": "passed",
+      "detail": "Synthetic fixture coverage only.",
+      "artifact_id": "artifact-baseline-a11y"
+    },
+    {
+      "name": "focus",
+      "status": "passed",
+      "detail": "Synthetic fixture coverage only.",
+      "artifact_id": "artifact-baseline-a11y"
+    },
+    {
+      "name": "semantics",
+      "status": "passed",
+      "detail": "Synthetic fixture coverage only.",
+      "artifact_id": "artifact-baseline-a11y"
+    },
+    {
+      "name": "contrast",
+      "status": "passed",
+      "detail": "Synthetic fixture coverage only.",
+      "artifact_id": "artifact-baseline-a11y"
+    }
+  ]
+}

@@ -1,0 +1,297 @@
+{
+  "schema_version": "ergo-audience.v1",
+  "audience_id": "AU-example-transit-card",
+  "product": {
+    "name": "교통카드 충전 앱 (예시)",
+    "category": "transit / payments",
+    "surface": "web",
+    "locale": "ko-KR",
+    "brief_ref": "illustrative example, not a real product"
+  },
+  "researched_at": "2026-09-28",
+  "method": {
+    "summary": "Illustrative file showing the contract. Values are placeholders, not research results.",
+    "limitations": [
+      "example only"
+    ]
+  },
+  "sources": [
+    {
+      "source_id": "SRC-01",
+      "type": "official_statistics",
+      "title": "주민등록 연령별 인구 (행정안전부)",
+      "url": "https://jumin.mois.go.kr/",
+      "accessed_at": "2026-09-28"
+    },
+    {
+      "source_id": "SRC-02",
+      "type": "app_store_reviews",
+      "title": "Comparable transit app reviews (placeholder)",
+      "url": null,
+      "accessed_at": "2026-09-28"
+    },
+    {
+      "source_id": "SRC-03",
+      "type": "product_brief",
+      "title": "Product brief (placeholder)",
+      "url": null,
+      "accessed_at": "2026-09-28"
+    }
+  ],
+  "segments": [
+    {
+      "segment_id": "SEG-commuter",
+      "name_ko": "출퇴근 직장인",
+      "summary": "Tops up on the way to the station, often one-handed while walking or standing on a bus.",
+      "priority": "primary",
+      "share": {
+        "value": 0.55,
+        "basis": "estimated",
+        "source_ids": [
+          "SRC-03"
+        ]
+      },
+      "confidence": "medium",
+      "evidence": [
+        {
+          "source_id": "SRC-02",
+          "claim": "reviews mention topping up while boarding",
+          "kind": "firsthand"
+        }
+      ],
+      "age_bands": {
+        "20s": 0.35,
+        "30s": 0.4,
+        "40s": 0.25
+      },
+      "devices": {
+        "galaxy-s24": 0.6,
+        "iphone-15": 0.4
+      },
+      "grips": {
+        "one_hand": 0.6,
+        "cradle": 0.25,
+        "two_thumbs": 0.15
+      },
+      "conditions": [
+        {
+          "condition": "cvd_deutan",
+          "share": 0.03,
+          "stakes": "normal",
+          "source_ids": [
+            "SRC-01"
+          ],
+          "why": "male CVD base rate"
+        }
+      ],
+      "contexts": [
+        {
+          "context_id": "CTX-walk",
+          "mobility": "walking",
+          "lighting": "indoor",
+          "one_handed": true,
+          "time_pressure": "high",
+          "share": 0.5,
+          "source_ids": [
+            "SRC-02"
+          ]
+        },
+        {
+          "context_id": "CTX-bus",
+          "mobility": "transit",
+          "lighting": "indoor",
+          "one_handed": true,
+          "share": 0.3,
+          "source_ids": [
+            "SRC-02"
+          ]
+        },
+        {
+          "context_id": "CTX-outdoor",
+          "mobility": "walking",
+          "lighting": "bright_sun",
+          "one_handed": true,
+          "share": 0.2,
+          "source_ids": [
+            "SRC-02"
+          ]
+        }
+      ],
+      "familiarity": {
+        "returning": 0.8,
+        "first_use": 0.1,
+        "expert": 0.1
+      },
+      "tasks": [
+        {
+          "task_id": "T-topup",
+          "goal_ko": "교통카드에 금액을 충전한다",
+          "jtbd": "When my card balance is low before boarding, I want to top up in seconds, so I am not stopped at the gate.",
+          "frequency": "weekly",
+          "criticality": "money",
+          "concrete_data": {
+            "amount": "20,000원",
+            "card": "티머니 1234"
+          },
+          "success_ko": "충전 완료 화면과 새 잔액",
+          "source_ids": [
+            "SRC-03"
+          ]
+        }
+      ],
+      "pain_points": [
+        {
+          "text": "payment button hard to reach one-handed",
+          "source_ids": [
+            "SRC-02"
+          ],
+          "kind": "firsthand"
+        }
+      ]
+    },
+    {
+      "segment_id": "SEG-senior",
+      "name_ko": "지하철 이용 고령층",
+      "summary": "Older riders who top up rarely, with presbyopia, sometimes first-time users.",
+      "priority": "secondary",
+      "share": {
+        "value": 0.3,
+        "basis": "estimated",
+        "source_ids": [
+          "SRC-01"
+        ]
+      },
+      "confidence": "low",
+      "evidence": [
+        {
+          "source_id": "SRC-01",
+          "claim": "60+ make up a large share of the population",
+          "kind": "statistic",
+          "quote": "(illustrative) 60–69세 7,4xx천 명, 70세 이상 6,5xx천 명"
+        }
+      ],
+      "age_bands": {
+        "60s": 0.6,
+        "70s+": 0.4
+      },
+      "devices": {
+        "galaxy-a55": 1.0
+      },
+      "conditions": [
+        {
+          "condition": "presbyopia",
+          "share": 0.9,
+          "stakes": "normal",
+          "source_ids": [
+            "SRC-01"
+          ]
+        },
+        {
+          "condition": "tremor_mild",
+          "share": 0.1,
+          "stakes": "high",
+          "source_ids": [
+            "SRC-01"
+          ]
+        }
+      ],
+      "contexts": [
+        {
+          "context_id": "CTX-home",
+          "mobility": "seated",
+          "lighting": "indoor",
+          "share": 0.7,
+          "source_ids": [
+            "SRC-03"
+          ]
+        }
+      ],
+      "familiarity": {
+        "returning": 0.6,
+        "first_use": 0.4
+      },
+      "tasks": [
+        {
+          "task_id": "T-topup",
+          "goal_ko": "교통카드에 금액을 충전한다",
+          "frequency": "monthly",
+          "criticality": "money",
+          "concrete_data": {
+            "amount": "10,000원",
+            "card": "우대용 카드"
+          },
+          "source_ids": [
+            "SRC-03"
+          ]
+        }
+      ]
+    },
+    {
+      "segment_id": "SEG-lowvision",
+      "name_ko": "저시력 사용자",
+      "summary": "Small group that relies on large text; high stakes because mis-payments are hard to undo.",
+      "priority": "edge",
+      "share": {
+        "value": null,
+        "basis": "unknown"
+      },
+      "confidence": "low",
+      "evidence": [
+        {
+          "source_id": "SRC-03",
+          "claim": "accessibility requirement in the brief",
+          "kind": "official",
+          "quote": "(illustrative) 글자 크기 200%에서도 충전 금액과 결제 버튼이 보여야 한다"
+        }
+      ],
+      "age_bands": {
+        "40s": 0.5,
+        "50s": 0.5
+      },
+      "devices": {
+        "galaxy-s24": 1.0
+      },
+      "conditions": [
+        {
+          "condition": "low_vision",
+          "share": 1.0,
+          "stakes": "high",
+          "source_ids": [
+            "SRC-03"
+          ]
+        },
+        {
+          "condition": "screen_reader",
+          "share": null,
+          "stakes": "high",
+          "source_ids": [
+            "SRC-03"
+          ],
+          "why": "brief requires TalkBack support",
+          "cause": "permanent"
+        }
+      ],
+      "tasks": [
+        {
+          "task_id": "T-balance",
+          "goal_ko": "교통카드 잔액을 확인한다",
+          "frequency": "weekly",
+          "criticality": "money",
+          "concrete_data": {
+            "card": "티머니 1234"
+          },
+          "source_ids": [
+            "SRC-03"
+          ]
+        }
+      ]
+    }
+  ],
+  "exclusions": [
+    {
+      "group": "screen-reader-only users",
+      "why": "the swarm does not simulate assistive technology; test with TalkBack/VoiceOver separately",
+      "test_instead": "TalkBack/VoiceOver 과제 테스트"
+    }
+  ]
+}

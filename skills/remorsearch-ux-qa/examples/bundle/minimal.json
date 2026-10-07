@@ -1,0 +1,96 @@
+{
+  "schema_version": "ux-evidence-bundle.v1",
+  "bundle_id": "bundle-example-minimal",
+  "permissions": {
+    "requested": ["read_only", "design_write"],
+    "granted": ["read_only"],
+    "blocked": [{"capability": "design_write", "reason": "Figma write access was not granted"}]
+  },
+  "records": {
+    "sources": [{
+      "id": "source-1",
+      "channel": "fixture",
+      "source_ref": "fixture://not-real-user-research",
+      "access_basis": "fixture",
+      "access_method": "authored-test-fixture",
+      "public_scope": "synthetic-fixture",
+      "retention_status": "retained"
+    }],
+    "evidence": [{
+      "id": "evidence-1",
+      "source_id": "source-1",
+      "evidence_type": "firsthand",
+      "epistemic_status": "observed",
+      "summary": "Synthetic example input for the contract, not a real community observation."
+    }],
+    "claims": [{
+      "id": "claim-1",
+      "claim_kind": "product_behavior",
+      "epistemic_status": "inferred",
+      "verification_status": "unverified",
+      "evidence_ids": ["evidence-1"],
+      "statement": "Hypothesis: a specific action label may clarify the next step."
+    }],
+    "personas": [{
+      "id": "persona-1",
+      "basis": "synthetic",
+      "adapter_revision": "adapter-1",
+      "schema_fingerprint": "sha256:persona-schema",
+      "seed": "seed-1",
+      "shard_or_config": "shard-a",
+      "max_scanned_rows": 100,
+      "max_bytes_read": 10000,
+      "timeout_ms": 1000,
+      "selected_record_ids": ["record-1"],
+      "filled_strata": ["mobile"],
+      "unfilled_strata": ["screen-reader"],
+      "stop_reason": "quota_reached",
+      "original_attributes": {"device": "mobile"},
+      "scenario_assumptions": {"network": "slow"}
+    }],
+    "scenarios": [{
+      "id": "scenario-1",
+      "persona_id": "persona-1",
+      "task": "검색 결과에서 다음 행동을 찾는다."
+    }],
+    "runs": [{
+      "id": "baseline-1",
+      "scenario_id": "scenario-1",
+      "status": "completed",
+      "surface_ref": "https://example.test/product"
+    }],
+    "observations": [{
+      "id": "observation-1",
+      "run_id": "baseline-1",
+      "epistemic_status": "observed",
+      "result": "Fixture scenario: the next action label is ambiguous."
+    }],
+    "findings": [{
+      "id": "finding-1",
+      "scenario_id": "scenario-1",
+      "observation_ids": ["observation-1"],
+      "claim_ids": ["claim-1"],
+      "verification_status": "verified",
+      "epistemic_status": "observed",
+      "severity": "P1"
+    }],
+    "proposals": [{
+      "id": "proposal-1",
+      "finding_ids": ["finding-1"],
+      "proposal_type": "interaction_and_state",
+      "expected_behavior_change": "다음 행동을 한눈에 확인한다."
+    }],
+    "figma": [{
+      "id": "figma-1",
+      "file_key": "file-1",
+      "branch_key": "main",
+      "baseline_version": "version-1",
+      "readback_version": "version-1",
+      "node_ids": ["12:34"],
+      "read_at": "2026-09-14T00:00:00+00:00",
+      "readback_artifact_ref": "artifact-figma",
+      "design_status": "comparison_ready",
+      "defect_class": "implementation_defect"
+    }]
+  }
+}

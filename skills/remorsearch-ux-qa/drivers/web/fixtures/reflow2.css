@@ -1,0 +1,3 @@
+/* Loaded with crossorigin from the page's own origin (no CORS headers): the reflow
+   copy must load it same-origin, so #link-box is 430 px wide there too. */
+#link-box { width: 430px; background: #fef; }

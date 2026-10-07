@@ -1,0 +1,12 @@
+{
+  "file_key": "file-1",
+  "branch_key": "main",
+  "baseline_version": "version-1",
+  "readback_version": "version-1",
+  "node_ids": [
+    "12:34"
+  ],
+  "read_at": "2026-09-14T00:00:00+00:00",
+  "editable": true,
+  "fixture_notice": "Authored contract fixture, not an actual Figma file/readback."
+}

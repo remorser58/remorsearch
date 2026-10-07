@@ -1,0 +1,18 @@
+[
+  {"name":"invented quotation","mutation":"invented_quote","command":"merge","exit_code":2},
+  {"name":"wrong source family","mutation":"wrong_family","command":"merge","exit_code":2},
+  {"name":"reader authors a status","mutation":"extra_status","command":"merge","exit_code":2},
+  {"name":"unreviewed import","mutation":"unreviewed","command":"merge","exit_code":1},
+  {"name":"residual identifier","mutation":"identifier","command":"merge","exit_code":1},
+  {"name":"partial harvest","mutation":"partial","command":"merge","exit_code":1},
+  {"name":"search count mismatch","mutation":"search_count","command":"merge","exit_code":1},
+  {"name":"source import hash mismatch","mutation":"hash","command":"merge","exit_code":2},
+  {"name":"duplicate part conflicts","mutation":"duplicate","command":"merge","exit_code":2},
+  {"name":"normalized quote too long","mutation":"length","command":"merge","exit_code":1},
+  {"name":"missing counter search","mutation":"counter","command":"gate","exit_code":1},
+  {"name":"claim content changed","mutation":"claim_identity","command":"gate","exit_code":2},
+  {"name":"consumer stale gate","mutation":"stale","command":"export-audience","exit_code":2},
+  {"name":"fixture cannot export","mutation":"fixture","command":"export-audience","exit_code":2},
+  {"name":"missing summary attestation","mutation":"attestation","command":"minimize","exit_code":1},
+  {"name":"lock contention","mutation":"lock","command":"gate","exit_code":3}
+]

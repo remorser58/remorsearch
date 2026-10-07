@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>viewport fixture</title>
+<!--
+  Viewport fixture (driver self-test). #go sits 900 px down, so the driver scrolls
+  before tapping it; tapping paints #cv (canvas only: no DOM mutation), so feedback can
+  only be seen in the captured frames, which must show the scrolled screen, not the
+  top of the document. With ?wide a 416 px box makes the content wider than a 360 px
+  phone: the layout viewport widens and the screen (visual viewport) pans inside it,
+  so boxes, hit tests and taps must use screen coordinates. #out records the tap.
+  #inner is its own scroll box: a swipe on it must scroll it while the driver captures
+  frames for visual feedback (a downscaling capture clip stops such a scroll);
+  #inner-pos shows its scrollTop. #field is an empty text field: Backspace in it
+  changes nothing (its blinking caret is not feedback); a typed character is.
+-->
+<style>
+  body { margin: 0; font-family: sans-serif; }
+  #wide { width: 416px; height: 40px; background: #cccccc; }
+  #spacer { height: 900px; }
+  #go { width: 120px; height: 44px; margin: 8px; }
+  #cv { display: block; width: 200px; height: 60px; margin: 8px; background: #ffffff; }
+  #tail { height: 300px; }
+  #inner { height: 200px; overflow-y: auto; border: 1px solid #999999; }
+  #inner p { margin: 0; padding: 12px; border-bottom: 1px solid #dddddd; }
+</style>
+</head>
+<body>
+<div id="wide" hidden>고정 폭 상자</div>
+<input id="field" type="text" aria-label="메모" style="font-size:16px;margin:8px;width:200px">
+<div id="inner"></div>
+<p id="inner-pos">0</p>
+<div id="spacer"></div>
+<button id="go" type="button">다음</button>
+<canvas id="cv" width="200" height="60"></canvas>
+<p id="out">대기</p>
+<div id="tail"></div>
+<script>
+  if (location.search.includes('wide')) document.getElementById('wide').hidden = false;
+  const inner = document.getElementById('inner');
+  inner.innerHTML = Array.from({ length: 40 }, (_, i) => `<p>항목 ${i + 1}</p>`).join('');
+  inner.addEventListener('scroll', () => { document.getElementById('inner-pos').textContent = String(Math.round(inner.scrollTop)); });
+  document.getElementById('go').addEventListener('click', () => {
+    const c = document.getElementById('cv').getContext('2d');
+    c.fillStyle = '#d93025';
+    c.fillRect(0, 0, 200, 60);
+    if (location.search.includes('wide')) document.getElementById('out').textContent = '눌림';
+  });
+</script>
+</body>
+</html>

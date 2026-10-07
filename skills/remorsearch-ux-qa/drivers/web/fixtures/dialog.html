@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dialog fixture</title>
+<!--
+  Focus-management fixture (driver self-test): #open-bad shows #sheet, a fixed painted
+  box over the screen with no role, and leaves focus on the trigger; #open-good opens
+  #dlg (role=dialog, aria-modal) and moves focus to its first field. #toast is a small
+  fixed box and is not a layer.
+-->
+<style>
+  body { margin: 0; font-family: sans-serif; padding: 16px; }
+  button { font-size: 16px; padding: 10px 14px; margin: 8px 0; }
+  #sheet { position: fixed; inset: 10% 0 0 0; background: #ffffff; border-top: 1px solid #999999; padding: 16px; }
+  #dlg { position: fixed; top: 20%; left: 5%; width: 90%; background: #ffffff; border: 1px solid #999999; padding: 16px; }
+  #toast { position: fixed; bottom: 16px; left: 16px; width: 160px; background: #333333; color: #ffffff; padding: 8px; }
+  .chip { display: inline-block; padding: 10px 14px; border: 1px solid #999999; cursor: pointer; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<button id="open-bad" type="button">주소 찾기</button>
+<button id="open-good" type="button">본인 확인</button>
+<div id="chips"><div id="chip-hot" class="chip">매운맛</div><button id="chip-ok" type="button"><span id="chip-ok-t">순한맛</span></button></div>
+<p id="lead" style="height: 600px">신청서 작성 안내: 주소를 먼저 찾고, 본인 확인을 마친 뒤 제출합니다. 이 문단은 덮는 층 아래에 남아 있어야 하는 본문입니다.</p>
+<div id="toast">저장했습니다</div>
+<div id="sheet" hidden><p>주소를 검색하세요</p><input id="q" aria-label="검색어"><button id="close-bad" type="button">닫기</button></div>
+<div id="dlg" role="dialog" aria-modal="true" aria-label="본인 확인" hidden><input id="code" aria-label="인증번호"><button id="close-good" type="button">확인</button></div>
+<script>
+  const $ = (id) => document.getElementById(id);
+  $('chip-hot').addEventListener('click', () => { $('chip-hot').classList.toggle('on'); });
+  $('open-bad').addEventListener('click', () => { $('sheet').hidden = false; });
+  $('close-bad').addEventListener('click', () => { $('sheet').hidden = true; });
+  $('open-good').addEventListener('click', () => { $('dlg').hidden = false; $('code').focus(); });
+  $('close-good').addEventListener('click', () => { $('dlg').hidden = true; $('open-good').focus(); });
+</script>
+</body>
+</html>

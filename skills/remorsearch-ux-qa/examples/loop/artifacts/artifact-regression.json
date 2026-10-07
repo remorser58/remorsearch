@@ -1,0 +1,13 @@
+{
+  "kind": "regression",
+  "replay_id": "replay-set-1",
+  "code_revision": "92cacc11123c9b7d582f7eac7aefd09da29eb51fe1e1495d032c1f44d410bf3d",
+  "run_ids": [
+    "replay-1"
+  ],
+  "scenario_ids": [
+    "scenario-1"
+  ],
+  "status": "passed",
+  "failed_checks": []
+}

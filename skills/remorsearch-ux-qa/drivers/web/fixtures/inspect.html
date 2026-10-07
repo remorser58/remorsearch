@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Form state fixture</title>
+  <style>
+    body { font: 16px sans-serif; margin: 20px; }
+    label { display: block; margin: 8px 0; }
+    input, textarea, select, button { font: inherit; padding: 8px; }
+    .reading { display: flex; gap: 8px; }
+    #reading-first { order: 2; }
+    [role="alert"] { color: #b3261e; }
+  </style>
+</head>
+<body>
+  <h1>Check order details</h1>
+  <div class="reading">
+    <button id="reading-first" type="button">First in document order</button>
+    <a id="reading-second" href="#form">Second in document order</a>
+  </div>
+  <button id="hidden" hidden>Hidden control</button>
+  <button id="invisible" style="opacity:0">Invisible control</button>
+  <button id="zero-size" style="width:0;height:0;padding:0;border:0;font-size:0">Zero size control</button>
+  <form id="form" novalidate>
+    <label>Address <input id="address" required aria-describedby="address-hint"></label>
+    <p id="address-hint">Include the apartment number.</p>
+    <p id="address-error" role="alert" hidden>Enter an address.</p>
+    <label>Order request <textarea id="request"></textarea></label>
+    <label><input id="terms" type="checkbox"> Accept terms</label>
+    <fieldset id="part-group">
+      <legend>Required part</legend>
+      <label><input id="part-a" type="radio" name="part" value="breast"> Breast</label>
+      <label><input id="part-b" type="radio" name="part" value="leg"> Leg</label>
+    </fieldset>
+    <p id="part-error" role="alert" hidden>Choose a part.</p>
+    <label>Sauces <select id="sauces" multiple>
+      <option value="mild" selected>Mild</option>
+      <option value="hot">Hot</option>
+      <option value="sweet" selected>Sweet</option>
+    </select></label>
+    <button id="submit-associated" type="submit">Submit with associated errors</button>
+    <button id="submit-unassociated" type="button">Submit with missing association</button>
+    <button id="keep" type="button">Re-render and keep request</button>
+    <button id="clear" type="button">Re-render and clear request</button>
+    <label>Password <input id="password" type="password" autocomplete="current-password"></label>
+    <p id="password-error" hidden></p>
+    <label>Card number <input id="card" autocomplete="cc-number"></label>
+    <p id="card-error" hidden></p>
+    <label>Security code <input id="cvv2" value="987"></label>
+    <label>Card holder <input id="holder" autocomplete="cc-name" value="Private Card Holder"></label>
+    <label>Bank account <input id="bank-account" value="BANK-PRIVATE-123"></label>
+    <label>Reference <input id="reference" value="4111111111111111"></label>
+    <label>Payment method <select id="payment-method"><option value="private-card-token" selected>Private token</option></select></label>
+    <div id="private-editor" role="textbox" contenteditable="true" aria-label="Private note" data-sensitive>private-editable-value <span id="private-child">private-child-value</span></div>
+    <div data-private><label>Private nested field <input id="private-nested" value="private-nested-value"></label></div>
+    <input id="token" type="hidden" value="hidden-private-token">
+    <button id="echo" type="button">Echo sensitive values into errors</button>
+  </form>
+  <div style="height:1500px"></div>
+  <button id="below" type="button">Control below the viewport</button>
+  <div id="shadow-host"></div>
+  <script>
+    const address = document.getElementById('address');
+    const addressError = document.getElementById('address-error');
+    document.getElementById('form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!document.querySelector('input[name="part"]:checked')) {
+        document.getElementById('part-group').setAttribute('aria-invalid', 'true');
+        document.getElementById('part-group').setAttribute('aria-describedby', 'part-error');
+        document.getElementById('part-error').hidden = false;
+        document.getElementById('part-a').focus();
+        return;
+      }
+      address.setAttribute('aria-invalid', 'true');
+      address.setAttribute('aria-describedby', 'address-hint address-error');
+      address.setAttribute('aria-errormessage', 'address-error');
+      addressError.hidden = false;
+      address.focus();
+    });
+    document.getElementById('submit-unassociated').addEventListener('click', () => {
+      address.removeAttribute('aria-invalid');
+      address.removeAttribute('aria-describedby');
+      address.removeAttribute('aria-errormessage');
+      addressError.hidden = false;
+    });
+    for (const id of ['keep', 'clear']) document.getElementById(id).addEventListener('click', () => {
+      const old = document.getElementById('request');
+      const replacement = old.cloneNode(true);
+      replacement.value = id === 'keep' ? old.value : '';
+      old.replaceWith(replacement);
+    });
+    document.getElementById('echo').addEventListener('click', () => {
+      for (const id of ['password', 'card']) {
+        const field = document.getElementById(id);
+        field.setAttribute('aria-invalid', 'true');
+        field.setAttribute('aria-describedby', id + '-error');
+        document.getElementById(id + '-error').textContent = 'Do not expose ' + field.value;
+      }
+    });
+    document.getElementById('shadow-host').attachShadow({ mode: 'open' }).innerHTML =
+      '<label>Shadow request <input id="shadow-request" value="shadow-value"></label>';
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "ergoqa-web-driver",
+  "private": true,
+  "description": "Playwright driver that operates real web pages for ergonomic persona swarm QA",
+  "license": "MIT",
+  "engines": { "node": ">=22 <23" },
+  "scripts": {
+    "selftest": "node selftest.mjs",
+    "install-browser": "playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "1.56.1"
+  }
+}

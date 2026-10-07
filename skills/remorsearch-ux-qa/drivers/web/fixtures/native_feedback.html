@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><title>Native binary-control feedback fixture</title>
+<!-- Native checkbox/radio activation evidence: small controls whose state change
+     paints too little for the downsampled visual diff, labels (explicit for= and
+     nested) that activate them, a large checkbox the visual path already sees,
+     and the negative controls (selected radio reclick, disabled, no-op, custom
+     ARIA with and without a handler, focus-only, delayed indicator, deferred
+     activation, restored state, protected and opted-out controls). -->
+<style>
+  body { margin: 0; font-family: sans-serif; background: #fff; }
+  .row { position: absolute; left: 40px; height: 60px; line-height: 60px; white-space: nowrap; }
+  input[type="checkbox"], input[type="radio"] { margin: 0; }
+  #small { width: 13px; height: 13px; }
+  #for-label { position: absolute; display: block; width: 20px; height: 20px; overflow: hidden;
+    border: 1px solid #333; cursor: pointer; }
+  #nest-label { display: inline-block; width: 20px; height: 20px; overflow: hidden; vertical-align: middle;
+    border: 1px solid #333; cursor: pointer; }
+  #nest-cb { width: 13px; height: 13px; display: block; }
+  #big { width: 48px; height: 48px; vertical-align: middle; }
+  #r1-label, #r2-label { padding: 3px 6px; border: 1px solid #333; cursor: pointer; }
+  #dis-label { padding: 3px 6px; border: 1px solid #999; color: #999; cursor: pointer; }
+  #noop { display: inline-block; padding: 6px 12px; border: 1px solid #333; cursor: pointer; }
+  #aria-cb, #aria-dead { display: inline-block; padding: 6px 12px; border: 1px solid #333; cursor: pointer; }
+  #aria-cb:focus, #aria-dead:focus { outline: none; }
+  #aria-cb[aria-checked="true"] { background: #e6f4ea; }
+  #focus-btn { padding: 8px 14px; }
+  #focus-btn:focus { outline: 4px solid #1a73e8; }
+  #delayed-label { padding: 3px 6px; border: 1px solid #333; cursor: pointer; }
+  #delayed-ind { display: inline-block; width: 120px; height: 20px; background: #eee; vertical-align: middle; }
+  #slow-label, #restore-label { padding: 3px 6px; border: 1px solid #333; cursor: pointer; }
+  #sensitive-label, #region-label { padding: 3px 6px; border: 1px solid #333; cursor: pointer; }
+  .ghost { position: absolute; left: -9999px; }
+</style></head><body>
+<div class="row" style="top:20px"><input type="checkbox" id="small"> 13x13 native checkbox</div>
+<label id="for-label" for="for-cb" style="top:100px" aria-label="20px explicit label"></label>
+<input type="checkbox" id="for-cb" style="position:absolute;left:120px;top:100px;width:13px;height:13px">
+<div class="row" style="top:180px"><label id="nest-label"><input type="checkbox" id="nest-cb"></label> 20x20 nested label</div>
+<div class="row" style="top:260px"><input type="checkbox" id="big"> 48x48 native checkbox</div>
+<div class="row" style="top:340px">
+  <input type="radio" id="r1" name="pair" checked>
+  <label id="r1-label" for="r1">선택된 라디오</label>
+  <input type="radio" id="r2" name="pair">
+  <label id="r2-label" for="r2">다른 라디오</label>
+</div>
+<div class="row" style="top:420px"><label id="dis-label" for="dis-cb"><input type="checkbox" id="dis-cb" disabled> 비활성</label></div>
+<div class="row" style="top:500px"><span id="noop">아무 일도 없음</span></div>
+<div class="row" style="top:580px"><span id="aria-cb" role="checkbox" aria-checked="false" tabindex="0">사용자 지정 체크박스</span>
+  <span id="aria-dead" role="checkbox" aria-checked="false" tabindex="0">처리기 없음</span></div>
+<div class="row" style="top:660px"><button type="button" id="focus-btn">포커스만</button></div>
+<div class="row" style="top:740px"><label id="delayed-label" for="delayed-cb"><input type="checkbox" id="delayed-cb"> 지연 표시</label>
+  <span id="delayed-ind"></span></div>
+<div class="row" style="top:820px"><label id="slow-label" for="slow-cb">1200ms 후 반응</label></div>
+<div class="row" style="top:900px"><label id="restore-label" for="restore-cb">복원 후 프로그래밍 전환</label></div>
+<div class="row" style="top:980px"><label id="sensitive-label" for="consent-cb">민감 동의</label></div>
+<div class="row" style="top:1060px" id="opted-region"><label id="region-label" for="region-cb">비공개 영역</label></div>
+<div class="row" style="top:1140px" data-private><label id="private-label" for="private-cb">Private region</label></div>
+<input type="checkbox" id="slow-cb" class="ghost">
+<input type="checkbox" id="restore-cb" class="ghost">
+<input type="checkbox" id="consent-cb" class="ghost" data-sensitive>
+<input type="checkbox" id="private-cb" class="ghost" data-private>
+<input type="checkbox" id="region-cb" class="ghost">
+<script>
+  // #aria-cb toggles only its ARIA state (a DOM mutation, no native input):
+  // semantic evidence, never recorded as a native state change.
+  document.getElementById('aria-cb').addEventListener('click', function () {
+    this.setAttribute('aria-checked', this.getAttribute('aria-checked') === 'true' ? 'false' : 'true');
+  });
+  // The indicator commits ~650 ms after the checkbox's own state change.
+  document.getElementById('delayed-cb').addEventListener('change', function () {
+    setTimeout(function () {
+      document.getElementById('delayed-ind').style.background = this.checked ? '#16803c' : '#eee';
+    }.bind(this), 650);
+  });
+  // #slow-label defers the activation itself: preventDefault cancels the label's
+  // forwarding, and the control is clicked only ~1200 ms later. The eventual
+  // input event is real, but the acknowledgment is slow — never a pass.
+  document.getElementById('slow-label').addEventListener('click', function (e) {
+    e.preventDefault();
+    setTimeout(function () { document.getElementById('slow-cb').click(); }, 1200);
+  });
+  // #restore-cb: the input handler immediately restores the old state, a
+  // programmatic property change flips it again later. The trusted event's
+  // state-at-event is the armed one, so its timestamp must not be inherited.
+  document.getElementById('restore-cb').addEventListener('input', function () {
+    this.checked = false;
+    var cb = this;
+    setTimeout(function () { cb.checked = true; }, 400);
+  });
+</script>
+</body></html>

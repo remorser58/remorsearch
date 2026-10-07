@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adaptation regression fixture</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.2 sans-serif; }
+  p { margin: 0 0 8px; }
+  button { font: inherit; }
+  #spacing-cut { width: 150px; height: 24px; overflow: hidden; }
+  #spacing-safe { height: auto; }
+  #spacing-scrollword { width: 150px; height: 40px; white-space: nowrap; overflow: auto; }
+  #already-large { line-height: 2; letter-spacing: .2em; word-spacing: .3em; margin-bottom: 3em; }
+  #viewport-shell { position: fixed; right: 0; top: 0; width: 130px; height: 100vh; overflow: hidden; }
+  #fixed-cta { position: absolute; top: 500px; height: 40px; width: 120px; }
+  #scroll-box { height: 80px; overflow: auto; }
+  #scroll-pad { height: 600px; }
+  #document-pad { height: 800px; }
+  .carousel { height: 20px; overflow: hidden; }
+  #offcanvas { position: fixed; left: -300px; top: 0; width: 200px; }
+  #main { width: calc(100% - 140px); }
+  .clean #spacing-cut { height: auto; }
+  .clean #viewport-shell { position: static; width: auto; height: auto; overflow: visible; }
+  .clean #fixed-cta { position: static; }
+  @media (max-height: 500px) { .disappear #ordinary-label { display: none; } }
+</style>
+<main id="main">
+  <p id="spacing-cut">Readable fixed text</p>
+  <p id="spacing-safe">공간에 맞춰 늘어나는 짧은 문단입니다.</p>
+  <p id="spacing-scrollword">Readable fixed text</p>
+  <p id="already-large">Larger settings stay large</p>
+  <label for="private-note">메모</label>
+  <textarea id="private-note">PREFILLED-PRIVATE-SENTINEL-7f4c</textarea>
+  <button id="ordinary-label" type="button">정상 버튼 이름</button>
+  <div id="scroll-box"><div id="scroll-pad"></div><button id="scroll-cta">스크롤로 접근</button></div>
+  <div class="carousel"><p id="carousel-hidden">다른 슬라이드</p></div>
+  <div id="offcanvas"><button>열기 전 메뉴</button></div>
+  <div hidden>숨긴 내용</div><div inert>비활성 내용</div>
+  <div id="document-pad"></div><button id="document-cta">아래쪽 버튼</button>
+</main>
+<div id="viewport-shell" role="toolbar"><button id="fixed-cta">고정 주요 버튼</button></div>
+<script>if (location.search) document.documentElement.classList.add('clean'); if (location.search === '?disappear') document.documentElement.classList.add('disappear');</script>
+</html>

@@ -1,0 +1,202 @@
+{
+  "axis": {
+    "assignment_id": "discovery-1",
+    "audience_questions": [
+      "segments"
+    ],
+    "axis_id": "product",
+    "completion": "complete",
+    "part_count": 1,
+    "part_index": 1,
+    "reader_id": "reader-1",
+    "round": 0
+  },
+  "budget_used": {
+    "document_requests": 1,
+    "policy_requests": 1,
+    "request_fetch_ids": [
+      "F-000000000001",
+      "F-000000000002"
+    ],
+    "searches": 1
+  },
+  "candidate_claims": [
+    {
+      "about_current_version": false,
+      "audience_values": [
+        {
+          "denominator_evidence_ids": [],
+          "join": {
+            "entity_id": "operators",
+            "entity_kind": "segment",
+            "field": "name_ko",
+            "segment_id": "operators"
+          },
+          "value": "Business operators",
+          "value_checks": []
+        }
+      ],
+      "claim_kind": "segment_exists",
+      "context_excerpt_ids": [],
+      "counter_excerpt_ids": [],
+      "counter_search": null,
+      "excerpt_ids": [
+        "excerpt"
+      ],
+      "local_id": "claim",
+      "observation_ids": [],
+      "scenario_priorities": [],
+      "scope": {
+        "context_id": null,
+        "period_end": "2026-10-01",
+        "period_start": "2026-09-01",
+        "population": "business operators",
+        "product_relation": "product_users",
+        "segment_id": "operators",
+        "version": "1"
+      },
+      "stakes": "normal",
+      "statement": "Business operators use order lookup in this diagnostic sample.",
+      "subject": {
+        "condition_id": null,
+        "context_id": null,
+        "pain_point_id": null,
+        "segment_id": "operators",
+        "task_id": null
+      }
+    }
+  ],
+  "dead_ends": [],
+  "excerpts": [
+    {
+      "capture_ref": "F-000000000001",
+      "cues": {
+        "condition": null,
+        "context": null,
+        "device": null,
+        "segment": "operators",
+        "task": "lookup"
+      },
+      "denominator": null,
+      "epistemic_status": "observed",
+      "evidence_type": "quantitative",
+      "excerpt": "business operators completed order lookup.",
+      "flags": {
+        "community_modelled_demographics": false,
+        "count_only": false,
+        "incentive_hits": [],
+        "injection_flags": [],
+        "lead_kind": "full_text",
+        "own_brand": false,
+        "polarity_uncertain": false,
+        "promotion_hits": [],
+        "protected_attribute_cue": false,
+        "secondhand": false,
+        "seller_managed": false,
+        "unclear_context": false,
+        "virtual_person_hits": []
+      },
+      "local_id": "excerpt",
+      "scope": {
+        "context_id": null,
+        "period_end": "2026-10-01",
+        "period_start": "2026-09-01",
+        "population": "business operators",
+        "product_relation": "product_users",
+        "segment_id": "operators",
+        "version": "1"
+      },
+      "source_local_id": "source",
+      "summary": "The diagnostic sample records successful task execution by this segment."
+    }
+  ],
+  "expand_leads": [],
+  "gaps": [
+    {
+      "note": "Only invented native team data was examined.",
+      "stop_class": "limited_fixture",
+      "url": null
+    }
+  ],
+  "queries_run": [
+    {
+      "assignment_id": "discovery-1",
+      "call_id": "Q-0000000000000001",
+      "called_at": "2026-10-01T00:00:00Z",
+      "outcome": "completed",
+      "phase": "discovery",
+      "queries": [
+        {
+          "lang": "en",
+          "q": "diagnostic operator lookup"
+        }
+      ],
+      "results_n": 1,
+      "tool": "offline-fixture"
+    }
+  ],
+  "return_id": "return-1",
+  "run_id": "run-example",
+  "schema_version": "ux-reader-return.v1",
+  "search_count": 1,
+  "sources": [
+    {
+      "access": {
+        "rung": "R1",
+        "presentation": "honest_ua",
+        "verdict": "ok_strong",
+        "stop_class": "none",
+        "fetched_at": "2026-10-01T00:00:00Z",
+        "robots": {
+          "decision": "allowed",
+          "status": "ok"
+        },
+        "context": "anonymous",
+        "terms": null
+      },
+      "access_basis": "public_anonymous",
+      "access_method": "honest_ua",
+      "author_key": null,
+      "flags": {
+        "community_modelled_demographics": false,
+        "count_only": false,
+        "incentive_hits": [],
+        "injection_flags": [],
+        "lead_kind": "full_text",
+        "own_brand": false,
+        "polarity_uncertain": false,
+        "promotion_hits": [],
+        "protected_attribute_cue": false,
+        "secondhand": false,
+        "seller_managed": false,
+        "unclear_context": false,
+        "virtual_person_hits": []
+      },
+      "item_key": null,
+      "local_id": "source",
+      "observed_at": "2026-10-01T00:00:00Z",
+      "org": "example-team",
+      "platform_family": "product_analytics",
+      "privacy_class": "aggregate",
+      "producer_stake": "independent",
+      "promo_check": "text_only",
+      "provenance": {
+        "kind": "reader",
+        "fetch_id": "F-000000000001",
+        "content_sha256": "ec858c14ad9c535bc3b69be1ce3a7b4ac3fba80e3be181abe4d0a4a0335937c5"
+      },
+      "public_scope": "public",
+      "published_at": "2026-09-30",
+      "retention_status": "retained",
+      "retention_until": null,
+      "source_family": "measured",
+      "source_type": "product_analytics",
+      "thread_key": null,
+      "title": "Illustrative team analytics",
+      "url": "https://measurement.example/product-study",
+      "valid_at": "2026-09-30",
+      "version": "1"
+    }
+  ],
+  "tail_reason": "The single diagnostic input is exhausted."
+}

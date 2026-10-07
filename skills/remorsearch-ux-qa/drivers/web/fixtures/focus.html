@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>focus fixture</title>
+<!--
+  Focus walk fixture (driver self-test):
+  #plain default ring; #nofocus outline:none, no replacement (WCAG 2.4.7);
+  #ring custom ring; #adj1/#adj2 2 px apart, #adj2 has no indicator (the
+  neighbour's ring must not count); #auto autofocus in the middle (the walk still
+  starts at the top); a same-origin iframe with three buttons, then #after-frame;
+  #pw password field (its value must never be recorded); #dlg-in inside a fixed
+  dialog under a floating label (its own layer, not a cover); #under behind the
+  fixed top #bar (WCAG 2.4.11); #deep below the fold with smooth scrolling and no
+  indicator; #far draws its indicator on #farmark, far from itself (ACT oj04fd:
+  passes); #anim has no indicator but an animated dot inside (the animation must
+  not count); #adlg-under sits under a non-modal absolute dialog (2.4.11 fails);
+  #menu-under and #chat-under sit under layers the scenario opens: #menu closes on
+  Escape without moving focus (passes), #chat does not (fails).
+  #open-step2 shows #step2, a mid-task panel the walks never see (the scenario hides
+  it again with #submit): focus probes before clicks must find #save without an
+  indicator, the :focus-visible ring of #fv after mouse clicks, the ring #js-ring
+  draws from a script only after a key press (a common library pattern), and skip
+  the text field #note.
+-->
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; padding-top: 120px; font-family: sans-serif; background: #ffffff; color: #202124; }
+  button, input { font-size: 16px; margin: 16px; padding: 8px 12px; }
+  #nofocus:focus, #adj2:focus, #deep:focus { outline: none; }
+  #ring:focus, #adj1:focus { outline: 3px solid #1a73e8; outline-offset: 0; }
+  .pair { display: inline-block; margin: 16px; }
+  .pair button { margin: 0 2px 0 0; }
+  #under { position: absolute; left: 16px; top: 20px; margin: 0; }
+  #bar { position: fixed; left: 0; right: 0; top: 0; height: 110px; background: #333333; color: #ffffff; z-index: 10; }
+  #dlg { position: fixed; right: 20px; top: 300px; width: 260px; padding: 8px; background: #ffffff; border: 1px solid #999999; z-index: 20; }
+  #dlg label { position: absolute; left: 22px; top: 22px; color: #666666; }
+  #dlg input { margin: 0; width: 200px; }
+  iframe { width: 320px; height: 70px; border: 1px solid #cccccc; margin: 16px; }
+  .spacer { height: 1600px; }
+  #far:focus, #anim:focus { outline: none; }
+  /* Fixed, separated boxes keep the distant ring independent of font wrapping. */
+  #far { position: absolute; left: 16px; top: 440px; width: 120px; height: 40px; margin: 0; overflow: hidden; }
+  #farmark { position: absolute; left: 1500px; top: 440px; width: 120px; height: 40px; background: #f1f3f4; }
+  body:has(#far:focus) #farmark { outline: 4px solid #d93025; }
+  #dot { display: inline-block; width: 12px; height: 12px; margin-left: 6px; border-radius: 6px; background: #1a73e8; }
+  .abs { position: absolute; margin: 0; }
+  #adlg { position: absolute; left: 900px; top: 640px; width: 220px; height: 120px; background: #ffffff; border: 1px solid #999999; z-index: 5; }
+  #menu, #chat { position: fixed; width: 300px; height: 150px; background: #fff8e1; border: 1px solid #999999; z-index: 30; }
+  #menu { left: 1150px; top: 650px; }
+  #chat { left: 1150px; top: 860px; }
+  #step2 { position: absolute; left: 16px; top: 820px; }
+  #step2 button, #step2 input { margin: 0 12px 0 0; }
+  #save:focus, #fv:focus, #js-ring:focus { outline: none; }
+  #fv:focus-visible { outline: 3px solid #1a73e8; }
+  #js-ring.kbfocus { box-shadow: 0 0 0 3px #d93025; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div id="bar">고정 바</div>
+<input id="under" type="text" aria-label="가려진 칸">
+<button id="plain" type="button">기본 버튼</button>
+<button id="nofocus" type="button">표시 없는 버튼</button>
+<button id="ring" type="button">링 버튼</button>
+<span class="pair"><button id="adj1" type="button">이전</button><button id="adj2" type="button">다음</button></span>
+<input id="auto" type="text" aria-label="자동 포커스 칸" autofocus>
+<iframe id="fr" title="프레임" srcdoc="<button>안1</button><button>안2</button><button>안3</button>"></iframe>
+<button id="after-frame" type="button">프레임 뒤</button>
+<input id="pw" type="password" aria-label="비밀번호">
+<div id="dlg"><label for="dlg-in">이름</label><input id="dlg-in" type="text"></div>
+<button id="far" type="button">먼 표시</button><span id="farmark">표시 자리</span>
+<button id="anim" type="button">움직이는 점<span id="dot"></span></button>
+<button id="adlg-under" class="abs" type="button" style="left: 950px; top: 680px">대화상자 밑</button>
+<div id="adlg" role="dialog" aria-label="안내">안내 상자</div>
+<button id="menu-btn" type="button" aria-expanded="false" aria-controls="menu">메뉴</button>
+<button id="chat-btn" type="button" aria-expanded="false" aria-controls="chat">상담</button>
+<button id="menu-under" class="abs" type="button" style="left: 1200px; top: 700px">메뉴 밑</button>
+<button id="chat-under" class="abs" type="button" style="left: 1200px; top: 910px">상담 밑</button>
+<button id="open-step2" class="abs" type="button" style="left: 16px; top: 760px">단계 2</button>
+<div id="step2" hidden><button id="fv" type="button">보이는 링</button><button id="js-ring" type="button">스크립트 링</button><input id="note" type="text" aria-label="메모"><button id="save" type="button">임시 저장</button><button id="submit" type="button">제출</button></div>
+<div id="menu" hidden>메뉴 내용</div>
+<div id="chat" hidden>상담 창</div>
+<script>
+  (function tick() {
+    document.getElementById('dot').style.background = 'hsl(' + Math.floor(performance.now() / 4) % 360 + ', 80%, 45%)';
+    requestAnimationFrame(tick);
+  })();
+  for (const [btn, panel] of [['menu-btn', 'menu'], ['chat-btn', 'chat']]) {
+    document.getElementById(btn).addEventListener('click', () => {
+      const p = document.getElementById(panel);
+      p.hidden = !p.hidden;
+      document.getElementById(btn).setAttribute('aria-expanded', String(!p.hidden));
+    });
+  }
+  document.getElementById('open-step2').addEventListener('click', () => { document.getElementById('step2').hidden = false; });
+  document.getElementById('submit').addEventListener('click', () => { document.getElementById('step2').hidden = true; });
+  let keyboard = false;
+  document.addEventListener('keydown', (e) => { if (!e.metaKey && !e.altKey && !e.ctrlKey) keyboard = true; }, true);
+  document.addEventListener('mousedown', () => { keyboard = false; }, true);
+  const jsRing = document.getElementById('js-ring');
+  jsRing.addEventListener('focus', () => { if (keyboard) jsRing.classList.add('kbfocus'); });
+  jsRing.addEventListener('blur', () => jsRing.classList.remove('kbfocus'));
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    document.getElementById('menu').hidden = true;
+    document.getElementById('menu-btn').setAttribute('aria-expanded', 'false');
+  });
+</script>
+<div class="spacer"></div>
+<button id="deep" type="button">깊은 버튼</button>
+<div style="height: 200px"></div>
+</body>
+</html>

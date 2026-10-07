@@ -1,0 +1,23 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Ambient feedback fixture</title>
+<!-- selftest advances the real CSS animation to known phases before each CDP
+     capture, reproducing equal pre-input colors on either side of a reversal. -->
+<style>
+  body { margin: 0; font-family: sans-serif; }
+  @keyframes pulse { 0% { background: #ffd43b; } 50% { background: #ff922b; } 100% { background: #ffd43b; } }
+  #pulse { position: absolute; left: 700px; top: 70px; width: 120px; height: 40px; animation: pulse 0.5s linear infinite; }
+  #dead { position: absolute; left: 400px; top: 60px; }
+  #dead:focus { outline: none; }
+  label { position: absolute; left: 400px; padding: 10px; border: 1px solid #333; }
+  #same-label { top: 140px; }
+  #paint-label { top: 220px; }
+  input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  #paint { left: 400px; top: 220px; }
+  #response { position: absolute; left: 100px; top: 400px; width: 240px; height: 120px; background: #ddd; }
+  #paint:checked ~ #response { background: #16803a; }
+</style></head><body>
+<div id="pulse"></div><button type="button" id="dead">No response</button>
+<label id="same-label"><input type="checkbox" id="same">Unchanging checkbox</label>
+<label id="paint-label" for="paint">Checkbox with visible response</label><input type="checkbox" id="paint">
+<div id="response"></div>
+</body></html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Owned painted state regression</title>
+<style>
+body { margin:24px; background:white; color:#111; font:16px sans-serif; }
+section { display:flex; align-items:center; gap:18px; margin-bottom:18px; }
+button { box-sizing:border-box; display:inline-flex; align-items:center; justify-content:center; gap:12px;
+  background:white; border:0; color:#111; padding:0; min-width:48px; height:36px; font:inherit; }
+.empty { width:48px; border:2px solid #eee; background:#eee; color:#111; }
+.switch { width:180px; justify-content:space-between; }
+.track { box-sizing:border-box; display:block; width:48px; height:28px; background:#eee; border:2px solid #e8e8e8; border-radius:14px; }
+.thumb { display:block; width:20px; height:20px; margin:2px; border-radius:50%; background:#ddd; }
+.good .track { background:#111; border-color:#111; } .good .thumb { background:white; }
+.red { --state:#d32f2f; } .green { --state:#388e3c; }
+svg { display:block; width:28px; height:28px; } svg rect, svg circle { fill:var(--state); }
+.stroke rect { fill:none; stroke:var(--state); stroke-width:4; }
+.css { border:0; background:var(--state); width:48px; }
+.icon { width:48px; } .icon rect { fill:#eee; }
+.gradient .track { background:linear-gradient(90deg, #eee, white); }
+.alpha .track { background:rgba(0,0,0,.5); border:0; } .alpha .thumb { background:rgba(255,255,255,.5); }
+.hidden { display:none; } .transparent { opacity:0; }
+.covered { position:relative; width:60px; height:36px; }
+.covered span { position:absolute; inset:6px 18px; background:var(--state); }
+.covered .cover { background:white; }
+.clipped { position:relative; width:60px; height:36px; overflow:hidden; }
+.clipped span { position:absolute; top:0; left:80px; width:24px; height:24px; background:var(--state); }
+</style>
+<section><button id="unused" role="switch" aria-checked="false" aria-label="Empty switch" class="empty"></button></section>
+<section><button id="child-pale" role="switch" aria-checked="false" class="switch">Notifications<span class="track"><span class="thumb"></span></span></button>
+<button id="child-good" role="switch" aria-checked="true" class="switch good">Notifications<span class="track"><span class="thumb"></span></span></button></section>
+<section id="svg-fill"><button id="svg-red" role="switch" aria-checked="false" class="red"><svg viewBox="0 0 28 28"><rect x="2" y="2" width="24" height="24"/></svg></button>
+<button id="svg-green" role="switch" aria-checked="true" class="green"><svg viewBox="0 0 28 28"><rect x="2" y="2" width="24" height="24"/></svg></button>
+<button id="svg-pale" class="icon" aria-label="Graphic button"><svg viewBox="0 0 28 28"><rect x="2" y="2" width="24" height="24"/></svg></button></section>
+<section id="svg-stroke"><button id="stroke-red" role="switch" aria-checked="false" class="red stroke"><svg viewBox="0 0 28 28"><rect x="3" y="3" width="22" height="22"/></svg></button>
+<button id="stroke-green" role="switch" aria-checked="true" class="green stroke"><svg viewBox="0 0 28 28"><rect x="3" y="3" width="22" height="22"/></svg></button></section>
+<section id="css-state"><button id="css-red" role="switch" aria-checked="false" class="red css" aria-label="A"></button>
+<button id="css-green" role="switch" aria-checked="true" class="green css" aria-label="B"></button></section>
+<section id="redundant"><button id="cue-red" role="switch" aria-checked="false" class="red">✕<svg viewBox="0 0 28 28"><rect x="2" y="2" width="24" height="24"/></svg></button>
+<button id="cue-green" role="switch" aria-checked="true" class="green">✓<svg viewBox="0 0 28 28"><rect x="2" y="2" width="24" height="24"/></svg></button></section>
+<section id="shapes"><button id="shape-red" role="switch" aria-checked="false" class="red"><svg viewBox="0 0 28 28"><rect x="2" y="2" width="24" height="24"/></svg></button>
+<button id="shape-green" role="switch" aria-checked="true" class="green"><svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="12"/></svg></button></section>
+<section><button id="disabled" role="switch" aria-checked="false" class="empty" disabled></button>
+<button id="gradient" role="switch" aria-checked="false" class="switch gradient">Gradient<span class="track"></span></button>
+<button id="alpha" role="switch" aria-checked="false" class="switch alpha">Alpha<span class="track"><span class="thumb"></span></span></button></section>
+<section aria-hidden="true" id="decorative" data-ergo-role="status"><span data-ergo-role="status" class="red"><svg viewBox="0 0 28 28"><rect x="2" y="2" width="24" height="24"/></svg></span>
+<span data-ergo-role="status" class="green"><svg viewBox="0 0 28 28"><rect x="2" y="2" width="24" height="24"/></svg></span></section>
+<button id="hidden" role="switch" class="empty hidden" aria-label="Hidden"></button>
+<button id="transparent" role="switch" class="empty transparent" aria-label="Transparent"></button>
+<section><button id="nested" role="switch" aria-checked="false" class="switch">Container<span role="switch" aria-checked="false" class="track" tabindex="0"></span></button>
+<button id="capped" role="switch" aria-checked="false" aria-label="Capped"></button>
+<input id="native" type="checkbox" aria-label="Native appearance"></section>
+<section id="covered-state"><button id="covered-red" role="switch" aria-checked="false" class="red covered"><span></span><span class="cover"></span></button>
+<button id="covered-green" role="switch" aria-checked="true" class="green covered"><span></span><span class="cover"></span></button>
+<button id="clip-red" role="switch" aria-checked="false" class="red clipped"><span></span></button>
+<button id="clip-green" role="switch" aria-checked="true" class="green clipped"><span></span></button>
+<input id="native-styled" aria-label="Styled input" style="border:2px solid #eee;background:white"></section>
+<section><button id="glyph-dark" aria-label="Close"><span style="color:#111;font-family:icon,sans-serif">×</span></button>
+<button id="glyph-pale" aria-label="Close"><span style="color:#eee;font-family:icon,sans-serif">×</span></button></section>
+<script>
+if (new URLSearchParams(location.search).has('unused-pale')) document.getElementById('unused').style.color='#eee';
+for(let i=0;i<70;i++){const part=document.createElement('span');part.style.cssText='width:1px;height:1px;background:#eee';document.getElementById('capped').appendChild(part);}
+</script></html>

@@ -1,0 +1,23 @@
+{
+  "name": "remorsearch-ux-qa",
+  "version": "1.0.0",
+  "description": "Evidence-first UX research and UX QA: audience research from real communities, persona-driven usability testing on live web pages, ergonomics and accessibility checks (KWCAG/WCAG), and fix-and-replay loops.",
+  "author": {
+    "name": "SeongJu Kim (remorser58)",
+    "url": "https://github.com/remorser58"
+  },
+  "homepage": "https://github.com/remorser58/remorsearch",
+  "repository": "https://github.com/remorser58/remorsearch",
+  "license": "MIT",
+  "keywords": [
+    "ux-research",
+    "ux-qa",
+    "usability-testing",
+    "accessibility",
+    "wcag",
+    "kwcag",
+    "ergonomics",
+    "persona",
+    "korean"
+  ]
+}

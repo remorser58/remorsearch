@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>주문 결제 · ergoqa 드라이버 자체 시험</title>
+<!--
+  Self-test fixture for drivers/web/ergo_drive.mjs. Not a product page.
+  Known values the self-test asserts: #pay colours #ffffff on #1a73e8, 16px/700;
+  #overlay-label background composites to #808080; #grad has a gradient (null
+  background); #faded is disabled at opacity 0.5; #qte is visible for 400 ms and
+  then 250 ms after #start-qte; #error appears 150 ms after #pay; #ext-pixel is
+  an off-origin request and the page opens an off-origin WebSocket; the network
+  policy must block both.
+  #flash-area flickers black/white at 10 Hz for 600 ms after #flash-btn (for the
+  flash sampler; it is only triggered on purpose by the headless self-test).
+  selftest.html?panel=actions shows a gesture panel instead of the checkout:
+  #lp-log, #dbl-log, #drag-log, #swipe-log and #key-log record what arrived.
+-->
+<style>
+  html { background: #ffffff; }
+  body { margin: 0; font-family: sans-serif; color: #202124; background: #ffffff; }
+  header { padding: 12px 16px 4px; }
+  h1 { font-size: 22px; margin: 0; }
+  main { padding: 0 16px 16px; }
+  p { font-size: 15px; margin: 8px 0; }
+  label { display: block; font-size: 14px; margin: 8px 0 4px; }
+  #card { box-sizing: border-box; width: 100%; height: 40px; font-size: 16px; border: 1px solid #c4c4c4; background: #ffffff; color: #202124; }
+  #error { display: none; margin: 8px 0; padding: 8px; color: #b3261e; background: #fdecea; font-size: 14px; }
+  .row { display: flex; gap: 6px; align-items: center; margin-top: 12px; }
+  #pay { flex: 1; height: 48px; font-size: 16px; font-weight: 700; color: #ffffff; background: #1a73e8; border: 0; border-radius: 8px; }
+  #delete-all { font-size: 12px; padding: 2px 6px; color: #d93025; background: #ffffff; border: 1px solid #d93025; border-radius: 4px; }
+  #done { margin: 8px 0; padding: 8px; color: #0d652d; background: #e6f4ea; }
+  #game { display: block; margin-top: 12px; width: 300px; height: 150px; background: #222222; }
+  #game-log { font-size: 13px; }
+  .overlay-wrap { background: rgba(0, 0, 0, 0.5); padding: 8px; margin-top: 12px; }
+  #overlay-label { color: #ffffff; margin: 0; }
+  #grad { background: linear-gradient(#ffffff, #eeeeee); padding: 8px; }
+  #faded { opacity: 0.5; background: #1a73e8; color: #ffffff; border: 0; height: 40px; padding: 0 12px; }
+  #qte { display: none; margin-top: 8px; padding: 8px; background: #fbbc04; color: #202124; font-weight: 700; }
+  #flash-area { height: 240px; margin-top: 8px; background: #ffffff; border: 1px solid #dddddd; }
+  .spacer { height: 1400px; }
+  #below { height: 48px; width: 100%; font-size: 16px; }
+  #actions { padding: 8px 16px; }
+  #actions .pad { display: inline-block; width: 150px; height: 64px; margin: 4px; background: #e8eaed; font-size: 14px; text-align: center; line-height: 64px; user-select: none; -webkit-user-select: none; }
+  #drag-track { position: relative; width: 260px; height: 56px; margin: 4px; background: #f1f3f4; }
+  #drag-handle { position: absolute; left: 4px; top: 4px; width: 48px; height: 48px; background: #1a73e8; touch-action: none; }
+  #swipe-area { touch-action: pan-y; }
+  #actions .log { font-size: 13px; margin: 2px 4px; }
+  #actions .tall { height: 1600px; }
+</style>
+</head>
+<body>
+<section id="actions" hidden>
+  <div id="lp-target" class="pad">길게 누르기</div>
+  <div id="dbl-target" class="pad">두 번 누르기</div>
+  <div id="swipe-area" class="pad">왼쪽으로 밀기</div>
+  <div id="drag-track"><div id="drag-handle" aria-label="끌기 손잡이"></div></div>
+  <p id="lp-log" class="log">-</p>
+  <p id="dbl-log" class="log">-</p>
+  <p id="drag-log" class="log">-</p>
+  <p id="swipe-log" class="log">-</p>
+  <p id="key-log" class="log">-</p>
+  <div class="tall"></div>
+</section>
+<header><h1>주문 결제</h1></header>
+<main>
+  <p id="summary">장바구니 상품 2개 · 합계 32,000원</p>
+  <!-- Off-origin request on a reserved .invalid host: the driver's network policy must block it. -->
+  <img id="ext-pixel" src="https://tracker.example.invalid/p.gif" alt="" width="1" height="1">
+  <label for="card">카드 번호</label>
+  <input id="card" type="text" inputmode="numeric" autocomplete="off" placeholder="0000 0000 0000 0000">
+  <div id="error" role="alert" data-ergo-role="error_message">카드 번호를 입력해 주세요.</div>
+  <div class="row">
+    <button id="pay" type="button">결제하기</button>
+    <button id="delete-all" type="button">전체 삭제</button>
+  </div>
+  <div id="done" role="status" hidden>결제 완료</div>
+  <canvas id="game" width="300" height="150" aria-label="미니 게임"></canvas>
+  <p id="game-log">점프 0회</p>
+  <div class="overlay-wrap"><p id="overlay-label">반투명 배경 위 글자</p></div>
+  <p id="grad">그라데이션 배경 위 글자</p>
+  <button id="faded" type="button" disabled>흐린 버튼</button>
+  <p id="plain-text">아무 반응이 없는 안내 문단입니다.</p>
+  <button id="start-qte" type="button">빠른 입력 시작</button>
+  <div id="qte" data-ergo-role="timed">지금 누르세요!</div>
+  <button id="flash-btn" type="button">깜빡임 시험</button>
+  <div id="flash-area"></div>
+  <div class="spacer"></div>
+  <button id="below" type="button">맨 아래 버튼</button>
+  <p id="below-status">아직 누르지 않음</p>
+</main>
+<script>
+  (function () {
+    var $ = function (s) { return document.querySelector(s); };
+    $('#pay').addEventListener('click', function () {
+      setTimeout(function () {
+        if (!$('#card').value.trim()) {
+          $('#error').style.display = 'block';
+        } else {
+          $('#error').style.display = 'none';
+          $('#done').hidden = false;
+        }
+      }, 150);
+    });
+    // Off-origin WebSocket on a reserved .invalid host: must be refused by the driver.
+    try { new WebSocket('wss://socket.example.invalid/live'); } catch (e) { /* ignore */ }
+    $('#delete-all').addEventListener('click', function () {
+      $('#summary').textContent = '장바구니가 비었습니다';
+    });
+
+    var canvas = $('#game');
+    var ctx = canvas.getContext('2d');
+    var JUMP = { x: 220, y: 70, w: 64, h: 64 };
+    function draw() {
+      ctx.fillStyle = '#222222';
+      ctx.fillRect(0, 0, 300, 150);
+      ctx.fillStyle = '#34a853';
+      ctx.fillRect(JUMP.x, JUMP.y, JUMP.w, JUMP.h);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '16px sans-serif';
+      ctx.fillText('점프', JUMP.x + 16, JUMP.y + 38);
+    }
+    draw();
+    var jumps = 0;
+    canvas.addEventListener('click', function (ev) {
+      var r = canvas.getBoundingClientRect();
+      var x = ev.clientX - r.left;
+      var y = ev.clientY - r.top;
+      if (x >= JUMP.x && x <= JUMP.x + JUMP.w && y >= JUMP.y && y <= JUMP.y + JUMP.h) {
+        jumps += 1;
+        $('#game-log').textContent = '점프 ' + jumps + '회';
+        console.error('핫스팟 테스트 오류: 의도적으로 기록한 콘솔 오류');
+      }
+    });
+    window.__ergoqa__ = {
+      hotspots: function () {
+        var r = canvas.getBoundingClientRect();
+        return [{ id: 'hs-jump', name: '점프', box: { x: r.left + JUMP.x, y: r.top + JUMP.y, w: JUMP.w, h: JUMP.h }, roles: ['game_control'] }];
+      }
+    };
+
+    $('#start-qte').addEventListener('click', function () {
+      var q = $('#qte');
+      setTimeout(function () { q.style.display = 'block'; }, 100);
+      setTimeout(function () { q.style.display = 'none'; }, 500);
+      setTimeout(function () { q.style.display = 'block'; }, 800);
+      setTimeout(function () { q.style.display = 'none'; }, 1050);
+    });
+
+    $('#flash-btn').addEventListener('click', function () {
+      var area = $('#flash-area');
+      var n = 0;
+      var t = setInterval(function () {
+        n += 1;
+        area.style.background = n % 2 ? '#000000' : '#ffffff';
+        if (n >= 12) { clearInterval(t); area.style.background = '#ffffff'; }
+      }, 50);
+    });
+
+    $('#below').addEventListener('click', function () {
+      $('#below-status').textContent = '맨 아래 버튼을 눌렀습니다';
+    });
+
+    // Gesture panel (selftest.html?panel=actions).
+    if (/[?&]panel=actions\b/.test(location.search)) {
+      $('#actions').hidden = false;
+      $('header').hidden = true;
+      $('main').hidden = true;
+    }
+    var lpStart = 0;
+    $('#lp-target').addEventListener('pointerdown', function () { lpStart = performance.now(); });
+    $('#lp-target').addEventListener('pointerup', function () {
+      $('#lp-log').textContent = '길게 ' + Math.round(performance.now() - lpStart) + 'ms';
+    });
+    $('#lp-target').addEventListener('contextmenu', function (ev) { ev.preventDefault(); });
+    $('#dbl-target').addEventListener('dblclick', function () { $('#dbl-log').textContent = '두 번 눌림'; });
+    var drag = null;
+    var handle = $('#drag-handle');
+    handle.addEventListener('pointerdown', function (ev) {
+      drag = { x: ev.clientX };
+      handle.setPointerCapture(ev.pointerId);
+    });
+    handle.addEventListener('pointermove', function (ev) {
+      if (drag) handle.style.left = (4 + ev.clientX - drag.x) + 'px';
+    });
+    handle.addEventListener('pointerup', function (ev) {
+      if (!drag) return;
+      $('#drag-log').textContent = '이동 ' + Math.round(ev.clientX - drag.x);
+      drag = null;
+    });
+    var swipeX = null;
+    $('#swipe-area').addEventListener('pointerdown', function (ev) {
+      swipeX = ev.clientX;
+      $('#swipe-area').setPointerCapture(ev.pointerId);
+    });
+    $('#swipe-area').addEventListener('pointerup', function (ev) {
+      if (swipeX === null) return;
+      var dx = ev.clientX - swipeX;
+      $('#swipe-log').textContent = dx < -50 ? '왼쪽 ' + Math.round(dx) : '짧음 ' + Math.round(dx);
+      swipeX = null;
+    });
+    var keys = [];
+    document.addEventListener('keydown', function (ev) {
+      keys.push(ev.key);
+      $('#key-log').textContent = keys.slice(-5).join(' ');
+    });
+  })();
+</script>
+</body>
+</html>

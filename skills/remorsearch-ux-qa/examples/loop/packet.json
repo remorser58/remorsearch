@@ -1,0 +1,652 @@
+{
+  "schema_version": "ux-loop.v1",
+  "mode": "fixture",
+  "goal": {
+    "id": "goal-action-label",
+    "objective": "Make the next action explicit within the declared sample scenario",
+    "scenario_ids": [
+      "scenario-1"
+    ],
+    "evidence_ids": [
+      "evidence-1"
+    ],
+    "max_iterations": 2,
+    "code_paths": [
+      "index.html"
+    ],
+    "stop_conditions": {
+      "all_scenarios_pass": true,
+      "all_findings_replayed": true,
+      "visual_pass": true,
+      "accessibility_pass": true,
+      "regression_pass": true,
+      "no_unknowns": true
+    }
+  },
+  "policy": {
+    "figma_first": true,
+    "allow_side_accents": false,
+    "raw_community_storage": false,
+    "retention_days": 7
+  },
+  "bundle": {
+    "schema_version": "ux-evidence-bundle.v1",
+    "bundle_id": "bundle-loop-fixture-1",
+    "permissions": {
+      "requested": [
+        "read_only",
+        "design_write"
+      ],
+      "granted": [
+        "read_only"
+      ],
+      "blocked": [
+        {
+          "capability": "design_write",
+          "reason": "Figma write access was not granted"
+        }
+      ]
+    },
+    "records": {
+      "sources": [
+        {
+          "id": "source-1",
+          "channel": "fixture",
+          "source_ref": "fixture://not-real-user-research",
+          "access_basis": "public",
+          "access_method": "authored-test-fixture",
+          "public_scope": "synthetic-fixture",
+          "retention_status": "retained"
+        }
+      ],
+      "evidence": [
+        {
+          "id": "evidence-1",
+          "source_id": "source-1",
+          "evidence_type": "firsthand",
+          "epistemic_status": "observed",
+          "summary": "Synthetic test input for the contract, not a real community observation."
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim-1",
+          "claim_kind": "product_behavior",
+          "epistemic_status": "inferred",
+          "verification_status": "unverified",
+          "evidence_ids": [
+            "evidence-1"
+          ],
+          "statement": "Hypothesis: a specific action label may clarify the next step."
+        }
+      ],
+      "personas": [
+        {
+          "id": "persona-1",
+          "basis": "synthetic",
+          "adapter_revision": "adapter-1",
+          "schema_fingerprint": "sha256:persona-schema",
+          "seed": "seed-1",
+          "shard_or_config": "shard-a",
+          "max_scanned_rows": 100,
+          "max_bytes_read": 10000,
+          "timeout_ms": 1000,
+          "selected_record_ids": [
+            "record-1"
+          ],
+          "filled_strata": [
+            "mobile"
+          ],
+          "unfilled_strata": [
+            "screen-reader"
+          ],
+          "stop_reason": "quota_reached",
+          "original_attributes": {
+            "device": "mobile"
+          },
+          "scenario_assumptions": {
+            "network": "slow"
+          }
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "scenario-1",
+          "persona_id": "persona-1",
+          "task": "검색 결과에서 다음 행동을 찾는다."
+        }
+      ],
+      "runs": [
+        {
+          "id": "baseline-1",
+          "scenario_id": "scenario-1",
+          "status": "completed",
+          "surface_ref": "https://example.test/product"
+        },
+        {
+          "id": "replay-1",
+          "scenario_id": "scenario-1",
+          "status": "completed",
+          "surface_ref": "https://example.test/product"
+        }
+      ],
+      "observations": [
+        {
+          "id": "observation-1",
+          "run_id": "baseline-1",
+          "epistemic_status": "observed",
+          "result": "Fixture scenario: the next action label is ambiguous."
+        }
+      ],
+      "findings": [
+        {
+          "id": "finding-1",
+          "scenario_id": "scenario-1",
+          "observation_ids": [
+            "observation-1"
+          ],
+          "claim_ids": [
+            "claim-1"
+          ],
+          "verification_status": "verified",
+          "epistemic_status": "observed",
+          "severity": "P1"
+        }
+      ],
+      "proposals": [
+        {
+          "id": "proposal-1",
+          "finding_ids": [
+            "finding-1"
+          ],
+          "proposal_type": "interaction_and_state",
+          "expected_behavior_change": "다음 행동을 한눈에 확인한다."
+        }
+      ],
+      "figma": [
+        {
+          "id": "figma-1",
+          "file_key": "file-1",
+          "branch_key": "main",
+          "baseline_version": "version-1",
+          "readback_version": "version-1",
+          "node_ids": [
+            "12:34"
+          ],
+          "read_at": "2026-09-14T00:00:00+00:00",
+          "readback_artifact_ref": "artifact-figma",
+          "design_status": "comparison_ready",
+          "defect_class": "implementation_defect"
+        }
+      ]
+    }
+  },
+  "scenarios": [
+    {
+      "id": "scenario-1",
+      "version": "1",
+      "origin": "https://example.test",
+      "route": "/product",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "device_scale_factor": 1
+      },
+      "device": "mobile-390",
+      "input_method": "keyboard",
+      "fixture": {
+        "id": "fixture-1",
+        "revision": "seed-1",
+        "account_ref": "anonymous-isolated",
+        "isolated": true
+      },
+      "steps": [
+        {
+          "id": "step-open",
+          "action": "Open /product in a fresh isolated browser context",
+          "expected": "Search results and the next action are visible",
+          "requires": "read_only"
+        },
+        {
+          "id": "step-keyboard",
+          "action": "Tab to the action and activate with Enter",
+          "expected": "Focus is visible and the product detail opens",
+          "requires": "read_only"
+        }
+      ],
+      "a11y_checks": [
+        "keyboard",
+        "focus",
+        "semantics",
+        "contrast"
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "artifact-figma",
+      "path": "artifacts/artifact-figma.json",
+      "sha256": "3ddd5ad9bd167f1189ac6c344ffd81e4988bbcdb6d145a2af94f33cf2365cfa4",
+      "kind": "figma_readback",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:00:00+00:00"
+    },
+    {
+      "id": "artifact-reference",
+      "path": "artifacts/artifact-reference.svg",
+      "sha256": "ad32e1652f460749332db47ef969fbb4bcf577074d24c08c1644baddc3bb4ca9",
+      "kind": "screenshot",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:00:00+00:00"
+    },
+    {
+      "id": "artifact-baseline-console",
+      "path": "artifacts/artifact-baseline-console.json",
+      "sha256": "b0535691fe2c13907da1edc1a848459dd067aefd650cde0122566435e0b67802",
+      "kind": "console",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:01:00+00:00"
+    },
+    {
+      "id": "artifact-baseline-network",
+      "path": "artifacts/artifact-baseline-network.json",
+      "sha256": "9ca109a3c79804c9e6371db2fc43001b6c9b06ab9c4a4007c6281a9c4f325577",
+      "kind": "network",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:01:00+00:00"
+    },
+    {
+      "id": "artifact-baseline-runtime",
+      "path": "artifacts/artifact-baseline-runtime.json",
+      "sha256": "eb23597bd5d4c0c6392f540d1edae31f3b908e297ed3d541f6cf6975cd943c05",
+      "kind": "runtime",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:01:00+00:00"
+    },
+    {
+      "id": "artifact-baseline-steps",
+      "path": "artifacts/artifact-baseline-steps.json",
+      "sha256": "11f885f53f648fec2ed73476a8317e9b9ddf54550e9bc2ab5bb8bb5a6924b0b6",
+      "kind": "steps",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:01:00+00:00"
+    },
+    {
+      "id": "artifact-baseline-a11y",
+      "path": "artifacts/artifact-baseline-a11y.json",
+      "sha256": "3e80a80164a1f9c7749b55806bcacbf3334e9cc5fd27301494e48ea1c45764fe",
+      "kind": "accessibility",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:01:00+00:00"
+    },
+    {
+      "id": "artifact-baseline-capture",
+      "path": "artifacts/artifact-baseline-capture.svg",
+      "sha256": "9d3f4fad44f6af601bdefc9bea32654c53f5e965019ae6f6199c01dd62e98a1e",
+      "kind": "screenshot",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:01:00+00:00"
+    },
+    {
+      "id": "artifact-baseline-visual",
+      "path": "artifacts/artifact-baseline-visual.json",
+      "sha256": "e3893c599e29ea42b755fb48c3ff83f6223a5e74fc1b4b8fac94757f445f40e9",
+      "kind": "visual_report",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:01:00+00:00"
+    },
+    {
+      "id": "artifact-replay-console",
+      "path": "artifacts/artifact-replay-console.json",
+      "sha256": "f453335715d77d127ac326de508a02d2fe0c6e142aea25e739d5d702db5905ec",
+      "kind": "console",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:04:00+00:00"
+    },
+    {
+      "id": "artifact-replay-network",
+      "path": "artifacts/artifact-replay-network.json",
+      "sha256": "d2798bddee4c9f5f2d196740642b7f181398551d0f64a488d634f5f563696758",
+      "kind": "network",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:04:00+00:00"
+    },
+    {
+      "id": "artifact-replay-runtime",
+      "path": "artifacts/artifact-replay-runtime.json",
+      "sha256": "987020dac891f44b0fe5a7ad728c34e2a274e31611be33a45fecc416ca6311f9",
+      "kind": "runtime",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:04:00+00:00"
+    },
+    {
+      "id": "artifact-replay-steps",
+      "path": "artifacts/artifact-replay-steps.json",
+      "sha256": "b77aadc909a82c40e8e3f30613c9e1e8f780fabf1a09f9b1d71fb0e9241b04e1",
+      "kind": "steps",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:04:00+00:00"
+    },
+    {
+      "id": "artifact-replay-a11y",
+      "path": "artifacts/artifact-replay-a11y.json",
+      "sha256": "5612d3c0dba8a30be7d03d3ed856c2a0a223d19d6a1fb665adbea2bbd519db6c",
+      "kind": "accessibility",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:04:00+00:00"
+    },
+    {
+      "id": "artifact-replay-capture",
+      "path": "artifacts/artifact-replay-capture.svg",
+      "sha256": "c905e1fef74a29b42e5f9a2175af8abf560edf26b11e392d6f5ab0fd365a66e7",
+      "kind": "screenshot",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:04:00+00:00"
+    },
+    {
+      "id": "artifact-replay-visual",
+      "path": "artifacts/artifact-replay-visual.json",
+      "sha256": "e2d54b03500f8628275b56b81a7b373a4ec625349b6d7622b73e64b443283a9e",
+      "kind": "visual_report",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:04:00+00:00"
+    },
+    {
+      "id": "artifact-patch",
+      "path": "artifacts/artifact-patch.patch",
+      "sha256": "1fcc4f02cd5fc262243bbd89c82cdbc68b9c0feb648b1facd18092f7bbc7caab",
+      "kind": "code_patch",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:00:00+00:00"
+    },
+    {
+      "id": "artifact-regression",
+      "path": "artifacts/artifact-regression.json",
+      "sha256": "1300d965fc55784310922d4fe56846defde0e025504b3a603e0122d175813dc8",
+      "kind": "regression",
+      "provenance": "fixture",
+      "created_at": "2026-09-14T00:06:00+00:00"
+    }
+  ],
+  "browser_runs": [
+    {
+      "id": "baseline-1",
+      "scenario_id": "scenario-1",
+      "scenario_digest": "98be8e0de9238b0e9c437a233b000f82b632111b28dd4df5ab7371bd9a5efda2",
+      "phase": "baseline",
+      "outcome": "failed",
+      "epistemic_status": "observed",
+      "execution": "fixture",
+      "operator": "fixture-author-not-a-real-tester",
+      "tool": {
+        "name": "authored-fixture",
+        "version": "1",
+        "browser": "not-executed",
+        "browser_version": "not-executed"
+      },
+      "code_revision": "a10023250bae9d7a89fef79340242ac4109845ee98eb7a37a763b265d6dab317",
+      "started_at": "2026-09-14T00:00:00+00:00",
+      "ended_at": "2026-09-14T00:02:00+00:00",
+      "environment": {
+        "origin": "https://example.test",
+        "route": "/product",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "device_scale_factor": 1
+        },
+        "device": "mobile-390",
+        "fixture_id": "fixture-1",
+        "fixture_revision": "seed-1",
+        "account_ref": "anonymous-isolated",
+        "session_id": "isolated-baseline"
+      },
+      "steps": [
+        {
+          "step_id": "step-open",
+          "outcome": "passed",
+          "actual": "Authored fixture outcome; not a browser execution.",
+          "artifact_ids": [
+            "artifact-baseline-steps"
+          ]
+        },
+        {
+          "step_id": "step-keyboard",
+          "outcome": "passed",
+          "actual": "Authored fixture outcome; not a browser execution.",
+          "artifact_ids": [
+            "artifact-baseline-steps"
+          ]
+        }
+      ],
+      "accessibility": [
+        {
+          "name": "keyboard",
+          "status": "passed",
+          "detail": "Synthetic fixture coverage only.",
+          "artifact_id": "artifact-baseline-a11y"
+        },
+        {
+          "name": "focus",
+          "status": "passed",
+          "detail": "Synthetic fixture coverage only.",
+          "artifact_id": "artifact-baseline-a11y"
+        },
+        {
+          "name": "semantics",
+          "status": "passed",
+          "detail": "Synthetic fixture coverage only.",
+          "artifact_id": "artifact-baseline-a11y"
+        },
+        {
+          "name": "contrast",
+          "status": "passed",
+          "detail": "Synthetic fixture coverage only.",
+          "artifact_id": "artifact-baseline-a11y"
+        }
+      ],
+      "evidence": {
+        "console": "artifact-baseline-console",
+        "network": "artifact-baseline-network",
+        "runtime": "artifact-baseline-runtime"
+      },
+      "reason": "Fixture finding: action label does not specify its destination."
+    },
+    {
+      "id": "replay-1",
+      "scenario_id": "scenario-1",
+      "scenario_digest": "98be8e0de9238b0e9c437a233b000f82b632111b28dd4df5ab7371bd9a5efda2",
+      "phase": "replay",
+      "outcome": "passed",
+      "epistemic_status": "observed",
+      "execution": "fixture",
+      "operator": "fixture-author-not-a-real-tester",
+      "tool": {
+        "name": "authored-fixture",
+        "version": "1",
+        "browser": "not-executed",
+        "browser_version": "not-executed"
+      },
+      "code_revision": "92cacc11123c9b7d582f7eac7aefd09da29eb51fe1e1495d032c1f44d410bf3d",
+      "started_at": "2026-09-14T00:03:00+00:00",
+      "ended_at": "2026-09-14T00:05:00+00:00",
+      "environment": {
+        "origin": "https://example.test",
+        "route": "/product",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "device_scale_factor": 1
+        },
+        "device": "mobile-390",
+        "fixture_id": "fixture-1",
+        "fixture_revision": "seed-1",
+        "account_ref": "anonymous-isolated",
+        "session_id": "isolated-replay"
+      },
+      "steps": [
+        {
+          "step_id": "step-open",
+          "outcome": "passed",
+          "actual": "Authored fixture outcome; not a browser execution.",
+          "artifact_ids": [
+            "artifact-replay-steps"
+          ]
+        },
+        {
+          "step_id": "step-keyboard",
+          "outcome": "passed",
+          "actual": "Authored fixture outcome; not a browser execution.",
+          "artifact_ids": [
+            "artifact-replay-steps"
+          ]
+        }
+      ],
+      "accessibility": [
+        {
+          "name": "keyboard",
+          "status": "passed",
+          "detail": "Synthetic fixture coverage only.",
+          "artifact_id": "artifact-replay-a11y"
+        },
+        {
+          "name": "focus",
+          "status": "passed",
+          "detail": "Synthetic fixture coverage only.",
+          "artifact_id": "artifact-replay-a11y"
+        },
+        {
+          "name": "semantics",
+          "status": "passed",
+          "detail": "Synthetic fixture coverage only.",
+          "artifact_id": "artifact-replay-a11y"
+        },
+        {
+          "name": "contrast",
+          "status": "passed",
+          "detail": "Synthetic fixture coverage only.",
+          "artifact_id": "artifact-replay-a11y"
+        }
+      ],
+      "evidence": {
+        "console": "artifact-replay-console",
+        "network": "artifact-replay-network",
+        "runtime": "artifact-replay-runtime"
+      },
+      "reason": ""
+    }
+  ],
+  "visual_checks": [
+    {
+      "id": "visual-baseline",
+      "run_id": "baseline-1",
+      "figma_id": "figma-1",
+      "node_ids": [
+        "12:34"
+      ],
+      "file_key": "file-1",
+      "branch_key": "main",
+      "baseline_version": "version-1",
+      "readback_version": "version-1",
+      "route": "/product",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "device_scale_factor": 1
+      },
+      "actual_artifact_id": "artifact-baseline-capture",
+      "reference_artifact_id": "artifact-reference",
+      "comparison_artifact_id": "artifact-baseline-visual",
+      "status": "failed",
+      "method": "review",
+      "reviewer": "fixture-author",
+      "checks": {
+        "layout": "passed",
+        "interaction_states": "failed",
+        "typography": "passed",
+        "side_accents": "passed"
+      },
+      "reason": "Synthetic comparison: ambiguous action label."
+    },
+    {
+      "id": "visual-replay",
+      "run_id": "replay-1",
+      "figma_id": "figma-1",
+      "node_ids": [
+        "12:34"
+      ],
+      "file_key": "file-1",
+      "branch_key": "main",
+      "baseline_version": "version-1",
+      "readback_version": "version-1",
+      "route": "/product",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "device_scale_factor": 1
+      },
+      "actual_artifact_id": "artifact-replay-capture",
+      "reference_artifact_id": "artifact-reference",
+      "comparison_artifact_id": "artifact-replay-visual",
+      "status": "passed",
+      "method": "review",
+      "reviewer": "fixture-author",
+      "checks": {
+        "layout": "passed",
+        "interaction_states": "passed",
+        "typography": "passed",
+        "side_accents": "passed"
+      },
+      "reason": ""
+    }
+  ],
+  "fixes": [
+    {
+      "id": "fix-1",
+      "proposal_id": "proposal-1",
+      "finding_ids": [
+        "finding-1"
+      ],
+      "kind": "code_write",
+      "changed_paths": [
+        "index.html"
+      ],
+      "patch_artifact_id": "artifact-patch",
+      "before_revision": "a10023250bae9d7a89fef79340242ac4109845ee98eb7a37a763b265d6dab317",
+      "after_revision": "92cacc11123c9b7d582f7eac7aefd09da29eb51fe1e1495d032c1f44d410bf3d",
+      "figma_id": "figma-1",
+      "rationale": "Clarify the destination of the next action.",
+      "expected_effect": "The fixture label names the product-detail action; real-user benefit remains unmeasured."
+    }
+  ],
+  "rounds": [
+    {
+      "id": "round-1",
+      "number": 1,
+      "baseline_run_ids": [
+        "baseline-1"
+      ],
+      "fix_ids": [
+        "fix-1"
+      ]
+    }
+  ],
+  "replays": [
+    {
+      "id": "replay-set-1",
+      "round_id": "round-1",
+      "run_ids": [
+        "replay-1"
+      ],
+      "regression": {
+        "status": "passed",
+        "artifact_id": "artifact-regression",
+        "scenario_ids": [
+          "scenario-1"
+        ],
+        "code_revision": "92cacc11123c9b7d582f7eac7aefd09da29eb51fe1e1495d032c1f44d410bf3d",
+        "detail": "Synthetic regression fixture only."
+      }
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>reflow fixture 2</title>
+<!--
+  Reflow pass fixture 2 (driver self-test), galaxy-s24 (360 px):
+  - #cssom-box gets its 420 px width from a rule inserted through the CSSOM (as
+    CSS-in-JS libraries do; the <style> element's text stays empty), #adopted-box from a
+    constructed (adopted) sheet, #shadow-wide from inside an open shadow root, and
+    #link-box from a crossorigin stylesheet on the page's own origin: all four stick out
+    at 320 px. #hero (800 px image attribute) is fluid only through the CSSOM rule and
+    must not stick out.
+  - #gnb-list collapses to max-height:0 behind a toggle below 340 px, #foot-list the
+    same way without one: their links are not lost (collapsed by design). #cart is an off-canvas drawer (translateX(100%)) and #inert-wide is inert:
+    neither sticks out. #ns-wide is <noscript> content: dropped from the copy.
+  - #buy-now sits in a fixed bottom bar that fits at 360 px and runs past the right edge
+    at 320 px: an offender although only the bar overflows.
+  - #side-nav becomes a fixed off-canvas menu (right: -100%) below 340 px: its links
+    are neither lost nor offenders. #promo is a carousel track: its second banner, cut
+    at 320 px, is reachable through the carousel's own controls (not lost).
+  - #tick counts up: the screen keeps one copy (the newest) until #open-panel opens a
+    dialog panel, a new screen.
+-->
+<style id="css-in-js"></style>
+<style>
+  body { margin: 0; font-family: sans-serif; overflow-x: hidden; }
+  #shadow-host { display: block; }
+  @media (max-width: 340px) { #gnb-list, #foot-list { max-height: 0; overflow: hidden; } }
+  #gnb-list, #foot-list { margin: 0; padding: 0; list-style: none; }
+  #cart { position: fixed; top: 0; right: 0; width: 80%; height: 100%; transform: translateX(100%); background: #fff; }
+  #inert-wide { width: 420px; }
+  #buybar { position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 8px; padding: 8px; white-space: nowrap; background: #eee; }
+  #buybar button { min-width: 160px; flex: none; }
+  #main-region { min-height: 300px; }
+  @media (max-width: 340px) { #side-nav { position: fixed; top: 0; right: -100%; width: 80%; height: 100%; background: #fff; } }
+  #promo { overflow: hidden; white-space: nowrap; }
+  #promo span { display: inline-block; }
+  #panel { min-height: 200px; border: 1px solid #999; }
+  [hidden] { display: none !important; }
+</style>
+<link rel="stylesheet" crossorigin href="reflow2.css">
+</head>
+<body>
+<nav id="gnb"><button type="button" aria-expanded="false" aria-controls="gnb-list">메뉴</button>
+  <ul id="gnb-list"><li><a id="gnb-a1" href="#a">공지사항 전체 보기</a></li><li><a id="gnb-a2" href="#b">자주 묻는 질문</a></li></ul></nav>
+<nav id="side-nav"><a id="side-a1" href="#s1">마이페이지</a> <a id="side-a2" href="#s2">고객센터</a></nav>
+<div id="promo" class="promo-carousel" aria-roledescription="carousel"><span id="promo-1" style="width: 300px">가을 할인 배너</span><span id="promo-2" style="width: 55px">두번째</span></div>
+<button type="button" aria-controls="promo">다음 배너</button>
+<div id="main-region">
+  <p>남은 시간 <span id="tick">0</span>초</p>
+  <div id="cssom-box">CSSOM으로 넣은 고정 폭 상자</div>
+  <div id="adopted-box">채택한 시트의 고정 폭 상자</div>
+  <div id="link-box">연결한 시트의 고정 폭 상자</div>
+  <shadow-card id="shadow-host"></shadow-card>
+  <img id="hero" width="800" height="40" alt="배너" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=">
+  <div id="inert-wide" inert>비활성 넓은 안내문</div>
+  <noscript><div id="ns-wide" style="width: 500px">자바스크립트를 켜 주세요</div></noscript>
+  <button id="open-panel" type="button">패널 열기</button>
+</div>
+<ul id="foot-list"><li><a id="foot-a1" href="#c">개인정보 처리방침</a></li></ul>
+<div id="panel" role="dialog" aria-label="패널" hidden><p>패널 내용</p></div>
+<aside id="cart">장바구니에 담은 상품 두 개</aside>
+<div id="buybar"><button id="buy-cart" type="button">장바구니 담기</button><button id="buy-now" type="button">바로 구매</button></div>
+<script>
+  document.getElementById('css-in-js').sheet.insertRule('#cssom-box { width: 420px; background: #eef; }', 0);
+  document.getElementById('css-in-js').sheet.insertRule('#hero { max-width: 100%; height: auto; }', 1);
+  const adopted = new CSSStyleSheet();
+  adopted.replaceSync('#adopted-box { width: 410px; background: #efe; }');
+  document.adoptedStyleSheets = [adopted];
+  customElements.define('shadow-card', class extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: 'open' }).innerHTML = '<p id="shadow-wide" style="width: 400px">그림자 안의 고정 폭 문단</p>';
+    }
+  });
+  let n = 0;
+  setInterval(() => { document.getElementById('tick').textContent = String(++n); }, 100);
+  document.getElementById('open-panel').addEventListener('click', () => { document.getElementById('panel').hidden = false; });
+</script>
+</body>
+</html>
