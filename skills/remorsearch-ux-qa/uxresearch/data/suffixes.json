@@ -1,0 +1,28 @@
+{
+  "schema_version": "ux-research-suffixes.v1",
+  "version": "2026-09-29.1",
+  "verified_at": null,
+  "note": "A small curated list, not the full Public Suffix List. public_suffixes: multi-label suffixes (plus the reserved 'test' name used by fixtures) that decide a host's registrable domain, so 'a.example.co.kr' belongs to 'example.co.kr'. hosting_suffixes: platforms where every subdomain is a separate author and a separate registrable domain. path_hosted: platforms where the first path segment names the author; they count per author for independence (research gate, later phase). profile_hosts: hosts where the first path segment of a URL is usually a person's profile name; the privacy scrubber replaces such URLs in excerpts (together with path_hosted, hosting_suffixes and route-table hosts whose author_from is path_segment or subdomain).",
+  "public_suffixes": [
+    "ac.kr", "co.kr", "es.kr", "go.kr", "hs.kr", "kg.kr", "mil.kr", "ms.kr", "ne.kr", "or.kr", "pe.kr", "re.kr",
+    "sc.kr", "busan.kr", "chungbuk.kr", "chungnam.kr", "daegu.kr", "daejeon.kr", "gangwon.kr", "gwangju.kr",
+    "gyeongbuk.kr", "gyeonggi.kr", "gyeongnam.kr", "incheon.kr", "jeju.kr", "jeonbuk.kr", "jeonnam.kr",
+    "seoul.kr", "ulsan.kr",
+    "co.jp", "ne.jp", "or.jp", "ac.jp", "go.jp",
+    "co.uk", "org.uk", "ac.uk", "gov.uk", "me.uk",
+    "com.au", "net.au", "org.au", "edu.au", "gov.au",
+    "com.br", "com.cn", "com.tw", "com.hk", "com.sg", "co.nz", "co.in",
+    "test"
+  ],
+  "hosting_suffixes": [
+    "tistory.com", "github.io", "blogspot.com", "wordpress.com", "notion.site", "substack.com", "postype.com"
+  ],
+  "path_hosted": [
+    {"host": "blog.naver.com", "segment": 1, "prefix": ""},
+    {"host": "m.blog.naver.com", "segment": 1, "prefix": ""},
+    {"host": "velog.io", "segment": 1, "prefix": "@"},
+    {"host": "brunch.co.kr", "segment": 1, "prefix": "@"},
+    {"host": "medium.com", "segment": 1, "prefix": "@"}
+  ],
+  "profile_hosts": ["x.com", "twitter.com", "instagram.com", "facebook.com", "threads.net", "tiktok.com"]
+}

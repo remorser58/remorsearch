@@ -1,0 +1,11 @@
+{
+  "ux-reader-return.v1.schema.json": "e030232780201881ca551503ead12970db8499380c5347eec6d7ead81218c237",
+  "ux-evidence-bundle.v1.schema.json": "2ab1c5c3f11c77fc88d5ca03cf89514d86ad6c876430e3940485dcd32cb25b2e",
+  "ux-research-gate.v1.schema.json": "1d3f471d0c2309dee7ea98310a9bb311f8800f956d3b1d0b15a92fa69d64ce85",
+  "ux-audience-draft.v1.schema.json": "487ef8efc1fb4f98b5cb3fc3ef7eb68c7260f17adecb1a5ab5362d8aebfc7449",
+  "ux-research-axes.v1.schema.json": "0015437ddef69105004a07505146c6eaeeb8d526ad942c23e1a9757b159bab84",
+  "ux-axis-acknowledgements.v1.schema.json": "392cdc7fc6fe4048cb3a702d6d632fb40d0d77439d5558508e6934a586146bec",
+  "ux-sanitized-imports.v1.schema.json": "72c1e27bb04f68cf982173fb1134dc4ecd1cd1ba7581c86dc51cfdd5222944ea",
+  "ux-report-claims.v1.schema.json": "af2c096bb38a3aaf7e63dfc8be744f4b2308da9e934e583ba4253c3ffaaf2230",
+  "ux-research-persona-hypotheses.v1.schema.json": "e8c03333af155408fce797b82fc9310575e80648161c4a9b5c056909cea3e474"
+}

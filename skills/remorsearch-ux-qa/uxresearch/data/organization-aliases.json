@@ -1,0 +1,8 @@
+{
+  "version": "organization-aliases-2026-10-01.1",
+  "aliases": {
+    "statistics korea": "kostat",
+    "통계청": "kostat",
+    "kostat.go.kr": "kostat"
+  }
+}

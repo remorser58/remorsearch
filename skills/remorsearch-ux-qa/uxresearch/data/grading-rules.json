@@ -1,0 +1,160 @@
+{
+  "rules_version": "source-grading-2026-10-01.1",
+  "fit": {
+    "segment_exists": {
+      "measured": "A",
+      "statistical": "B",
+      "estimate": "C",
+      "intent": "C",
+      "voice": "B",
+      "secondary": "C",
+      "expert_judgment": "D"
+    },
+    "segment_share": {
+      "measured": "A",
+      "statistical": "B",
+      "estimate": "C",
+      "intent": "E",
+      "voice": "E",
+      "secondary": "D",
+      "expert_judgment": "E"
+    },
+    "device_mix": {
+      "measured": "A",
+      "statistical": "B",
+      "estimate": "C",
+      "intent": "E",
+      "voice": "E",
+      "secondary": "D",
+      "expert_judgment": "E"
+    },
+    "condition_presence": {
+      "measured": "A",
+      "statistical": "B",
+      "estimate": "C",
+      "intent": "D",
+      "voice": "B",
+      "secondary": "C",
+      "expert_judgment": "D"
+    },
+    "condition_share": {
+      "measured": "A",
+      "statistical": "B",
+      "estimate": "C",
+      "intent": "E",
+      "voice": "E",
+      "secondary": "D",
+      "expert_judgment": "E"
+    },
+    "context_of_use": {
+      "measured": "A",
+      "statistical": "C",
+      "estimate": "C",
+      "intent": "D",
+      "voice": "B",
+      "secondary": "C",
+      "expert_judgment": "D"
+    },
+    "task": {
+      "measured": "A",
+      "statistical": "D",
+      "estimate": "C",
+      "intent": "C",
+      "voice": "B",
+      "secondary": "C",
+      "expert_judgment": "D"
+    },
+    "pain_point": {
+      "measured": "A",
+      "statistical": "C",
+      "estimate": "C",
+      "intent": "E",
+      "voice": "B",
+      "secondary": "C",
+      "expert_judgment": "D"
+    },
+    "workaround": {
+      "measured": "A",
+      "statistical": "E",
+      "estimate": "D",
+      "intent": "D",
+      "voice": "B",
+      "secondary": "C",
+      "expert_judgment": "D"
+    },
+    "product_behavior": {
+      "measured": "D",
+      "statistical": "E",
+      "estimate": "D",
+      "intent": "D",
+      "voice": "D",
+      "secondary": "D",
+      "expert_judgment": "D"
+    },
+    "intended_behavior": {
+      "measured": "D",
+      "statistical": "E",
+      "estimate": "D",
+      "intent": "A",
+      "voice": "D",
+      "secondary": "C",
+      "expert_judgment": "D"
+    },
+    "prevalence": {
+      "measured": "A",
+      "statistical": "B",
+      "estimate": "C",
+      "intent": "E",
+      "voice": "E",
+      "secondary": "D",
+      "expert_judgment": "E"
+    },
+    "user_preference": {
+      "measured": "A",
+      "statistical": "B",
+      "estimate": "C",
+      "intent": "E",
+      "voice": "E",
+      "secondary": "D",
+      "expert_judgment": "E"
+    },
+    "real_user_preference": {
+      "measured": "A",
+      "statistical": "B",
+      "estimate": "C",
+      "intent": "E",
+      "voice": "E",
+      "secondary": "D",
+      "expert_judgment": "E"
+    },
+    "discomfort": {
+      "measured": "A",
+      "statistical": "B",
+      "estimate": "C",
+      "intent": "E",
+      "voice": "E",
+      "secondary": "D",
+      "expert_judgment": "E"
+    }
+  },
+  "source_families": {
+    "product_analytics": "measured",
+    "survey": "measured",
+    "interview": "measured",
+    "usability_test": "measured",
+    "support_tickets": "measured",
+    "official_statistics": "statistical",
+    "research_paper": "statistical",
+    "market_report": "estimate",
+    "competitor": "estimate",
+    "official_docs": "intent",
+    "product_brief": "intent",
+    "community": "voice",
+    "app_store_reviews": "voice",
+    "news": "secondary",
+    "expert_judgment": "expert_judgment",
+    "llm_output": "none",
+    "synthetic": "none"
+  },
+  "survey_vendor_family": "estimate"
+}

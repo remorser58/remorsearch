@@ -1,0 +1,903 @@
+{
+  "schema_version": "ux-research-routes.v1",
+  "version": "2026-09-30.4",
+  "note": "The only place platform names appear in the reader. Every entry is unverified (verified_at null) until a manual live check and a human review; an unverified route that fails simply falls through to the next rung. hosts: exact names or '*.suffix'. path: a regular expression on the URL path; its named groups become template variables, and query parameters are available as {q_<name>}. path_by_host: a different path pattern for some of the hosts (such as a short-link host). Other template variables: {scheme} {host} {port_suffix} {path} {query} {url_enc}, and {key} for a user key read from the environment variable named in 'env' (always REMORSEARCH_*; 'env_aliases' lists older names that are still accepted; the value is never stored or logged). A key named in this packaged table is sent only to the hosts this table names for it, and only REMORSEARCH_* variables and the aliases listed here are ever read, whatever route table a run uses. official: kind 'feed' (scope 'item' keeps only the entry that links to the page; scope 'all' keeps every entry, such as a thread or review feed), 'oembed', or 'api' (read only by the provider adapter named in 'adapter', uxresearch/<adapter>.py, which has its own fields: the youtube adapter reads id_from, id_pattern, url, comments_url, page_size, max_pages, quota_units_per_call, quota_reset_tz, retention_days and policy_note; an 'api' route with no adapter is skipped). alternates: the site's own mobile or AMP twins. author_from: subdomain | path_segment | page. profile_paths: first path segments that name a person's channel or profile on the platform's hosts; the privacy scrubber replaces such URLs. drop and author (string lists, optional, both currently unused by every packaged platform): extra chrome tokens and extra author-label tokens that the reader adds to its global token lists (data/markers.json chrome_idents and author_idents) when it parses a page on this platform's hosts; add one only for a token the global list lacks, with a live check of the platform's markup. The reader consumes both fields (extract.py). login_hosts: a redirect there is an auth_gate stop. The scope lists are checked before any request, on every redirect hop (robots.txt redirects included), route and alternate, in this order: the researcher's deny list, search_pages and a site's own search results pages (a URL with a query on a platform's host whose path has a 'search' segment; refused at the start with exit 2; a stop when reached by a redirect), the never_call endpoints of discovery entries switched off (the same), third_party_copies (archives, caches, translation and reader proxies, AMP caches and front ends: the URL a copy wraps is judged first and a stop there stops the copy with the same class; otherwise the copy is refused like a search page, except an entry marked wayback_for_official for a page of the product's own site when the brief allows it; target says how the wrapped URL is found: path_url, label_host, amp_path, query_url, or template with path, query and wraps, where an entry with no hosts matches any host but its except_hosts by URL shape alone), out_of_scope (private channels), then terms_restricted. A terms_restricted entry comes only from a published or reported restriction with its sources, never from a guess: status records evidence quality: 'confirmed' when the primary clause was read and checked, 'reported' when its provenance or version remains unresolved; verified_at remains null until a person reads the primary page. Every entry that covers a URL must be lifted for the run, each by a check of its own in the user's brief (access_policy.terms_checked): lift_requires must explicitly name never, written_permission or terms_check; missing or unknown values fail closed and are refused at start and resume. Status never decides liftability. A check lifts an entry only when lift_requires is not never and its terms_url is one of the entry's own terms documents (terms_url and terms_urls, compared by host and path), its host is one of the entry's hosts or narrower, its host covers the URL and its result is permits_this_reading; an entry whose lift_requires is written_permission (its clause forbids automated collection without prior written permission or consent) also needs the permission {granted_by, granted_on, reference} in that check, and a check dated before effective_from lifts nothing. Every open-run command revalidates the 365-day check limit and effective_from. Earlier runs must restart; their hashed files are never rewritten. A lifted entry has a budget of 10 documents across its hosts. official_route names the packaged platform whose official route may still run for such a host (official-only mode: no page request, no render capture); official-only mode reads only this packaged table. Host names cover their subdomains in every list. The packaged scope lists always apply, also when a run uses another route table (--routes), which can add platforms and entries but never change or remove a packaged entry, and never add or change a platform for a host a packaged terms entry covers (start refuses such a table). Verify every note live before relying on it.",
+  "platforms": [
+    {
+      "id": "naver-blog",
+      "hosts": ["blog.naver.com", "m.blog.naver.com"],
+      "platform_family": "blog",
+      "path": "^/(?P<author>[A-Za-z0-9_-]{1,40})/(?P<post>[0-9]{1,20})/?$",
+      "author_from": "path_segment",
+      "official": [
+        {"kind": "feed", "scope": "item", "url": "https://rss.blog.naver.com/{author}.xml", "auth": "none"}
+      ],
+      "alternates": [{"kind": "mobile", "url": "https://m.blog.naver.com/{author}/{post}"}],
+      "login_hosts": ["nid.naver.com"],
+      "terms_note": "terms_restricted (confirmed, naver-terms): the reader stops before any request, the RSS route included, unless the user's own terms check lifts it for the run. Public posts only. The desktop page is a frame shell; the mobile twin carries the text. Comments load separately and need a render. robots.txt blocks for AI training and search crawlers are reported since 2025-07 (a recorded signal, not a stop; unknown until a live robots check). The primary terms were read on 2026-10-01; lift_requires: written_permission still requires a current entry-specific user check and prior written permission.",
+      "sources": ["https://www.etnews.com/20250716000347", "https://v.daum.net/v/20250716143440337"],
+      "verified_at": null
+    },
+    {
+      "id": "naver-blog-postview",
+      "hosts": ["blog.naver.com", "m.blog.naver.com"],
+      "platform_family": "blog",
+      "path": "^/PostView\\.(naver|nhn)$",
+      "author_from": "page",
+      "official": [
+        {"kind": "feed", "scope": "item", "url": "https://rss.blog.naver.com/{q_blogId}.xml", "auth": "none"}
+      ],
+      "alternates": [{"kind": "mobile", "url": "https://m.blog.naver.com/{q_blogId}/{q_logNo}"}],
+      "login_hosts": ["nid.naver.com"],
+      "terms_note": "Older post URL form with blogId and logNo query parameters. terms_restricted (confirmed, naver-terms) like naver-blog. The primary terms were read on 2026-10-01; lift_requires: written_permission still requires a current entry-specific user check and prior written permission.",
+      "verified_at": null
+    },
+    {
+      "id": "naver-cafe",
+      "hosts": ["cafe.naver.com", "m.cafe.naver.com"],
+      "platform_family": "community",
+      "path": "^/(?P<cafe>[A-Za-z0-9_-]{1,40})/(?P<article>[0-9]{1,20})/?$",
+      "author_from": "page",
+      "official": [],
+      "alternates": [{"kind": "mobile", "url": "https://m.cafe.naver.com/{cafe}/{article}"}],
+      "login_hosts": ["nid.naver.com"],
+      "terms_note": "terms_restricted (confirmed): the cafe notice dated 2026-08-25 bans bulk collection of posts and comments (Naver's terms apply as well). The reader stops before any request unless the user's own terms check lifts it for the run. Member-only boards stay auth_gate gaps; a signed-in capture is taken in only for a cafe the brief authorises (access_policy.signed_in_communities, with the cafe's path_prefix) and only after such a lift, and is kept as summaries only. Primary URL: https://notice.naver.com/notices/cafe/33743, read on 2026-10-01. The notice and general terms each require a separate user check and prior written permission under lift_requires: written_permission.",
+      "verified_at": null
+    },
+    {
+      "id": "naver-kin",
+      "hosts": ["kin.naver.com", "m.kin.naver.com"],
+      "platform_family": "qna",
+      "path": "^/qna/detail\\.naver$",
+      "author_from": "page",
+      "official": [],
+      "alternates": [{"kind": "mobile", "url": "https://m.kin.naver.com/qna/detail.naver?{query}"}],
+      "login_hosts": ["nid.naver.com"],
+      "terms_note": "terms_restricted (confirmed, naver-terms): stops before any request unless the user's own terms check lifts it. Question and answers on one page; answerer names must be scrubbed. The primary terms were read on 2026-10-01; lift_requires: written_permission still requires a current entry-specific user check and prior written permission.",
+      "verified_at": null
+    },
+    {
+      "id": "naver-place",
+      "hosts": ["m.place.naver.com"],
+      "platform_family": "commerce_reviews",
+      "author_from": "page",
+      "official": [],
+      "alternates": [],
+      "login_hosts": ["nid.naver.com"],
+      "terms_note": "terms_restricted (confirmed, naver-terms). No documented review route; the team's own export comes first. Host and URL shapes unverified. The primary terms were read on 2026-10-01; lift_requires: written_permission still requires a current entry-specific user check and prior written permission.",
+      "verified_at": null
+    },
+    {
+      "id": "tistory",
+      "hosts": ["*.tistory.com"],
+      "platform_family": "blog",
+      "path": "^/(?P<post>[0-9]{1,12})/?$",
+      "author_from": "subdomain",
+      "official": [
+        {"kind": "feed", "scope": "item", "url": "https://{host}/rss", "auth": "none"}
+      ],
+      "alternates": [{"kind": "mobile", "url": "https://{host}/m/{post}"}],
+      "login_hosts": [],
+      "terms_note": "Each subdomain is a separate author. The feed holds recent posts only. The available primary terms clause was read on 2026-09-30; the dated clause observation and unresolved scope are recorded in korea-platforms.json. User checks and collection permission remain unresolved; all existing stops apply.",
+      "verified_at": null
+    },
+    {
+      "id": "daum-cafe",
+      "hosts": ["cafe.daum.net", "m.cafe.daum.net"],
+      "platform_family": "community",
+      "author_from": "page",
+      "official": [],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "Public cafes only; member-only cafes are auth_gate gaps. Terms unchecked. The available primary terms clause was read on 2026-09-30; the dated clause observation and unresolved scope are recorded in korea-platforms.json. User checks and collection permission remain unresolved; all existing stops apply.",
+      "verified_at": null
+    },
+    {
+      "id": "dcinside",
+      "hosts": ["gall.dcinside.com"],
+      "platform_family": "community",
+      "path": "^/(mgallery/|mini/)?board/view/?$",
+      "author_from": "page",
+      "official": [],
+      "alternates": [{"kind": "mobile", "url": "https://m.dcinside.com/board/{q_id}/{q_no}"}],
+      "login_hosts": [],
+      "terms_note": "terms_restricted (confirmed): section 16 was read directly on 2026-09-30 and prohibits crawling without prior written consent. The reader stops before any request unless the user's own terms check lifts it for the run. Logged-out posters show a nickname plus a partial IP address; the IP is scrubbed, and such posters and the default nickname 'ㅇㅇ' are counted by thread, never by author key. lift_requires: written_permission governs lifting.",
+      "verified_at": null
+    },
+    {
+      "id": "ppomppu",
+      "hosts": ["www.ppomppu.co.kr", "ppomppu.co.kr"],
+      "platform_family": "community",
+      "path": "^/zboard/view\\.php$",
+      "author_from": "page",
+      "official": [],
+      "alternates": [{"kind": "mobile", "url": "https://m.ppomppu.co.kr/new/bbs_view.php?id={q_id}&no={q_no}"}],
+      "login_hosts": [],
+      "terms_note": "Deal boards mix promotion and experience; check promotion markers. The available primary terms clause was read on 2026-09-30; the dated clause observation and unresolved scope are recorded in korea-platforms.json. User checks and collection permission remain unresolved; all existing stops apply.",
+      "verified_at": null
+    },
+    {
+      "id": "ruliweb",
+      "hosts": ["bbs.ruliweb.com", "m.ruliweb.com"],
+      "platform_family": "community",
+      "path": "^/(?P<rest>[A-Za-z0-9_/-]{1,120}/read/[0-9]{1,12})/?$",
+      "author_from": "page",
+      "official": [],
+      "alternates": [{"kind": "mobile", "url": "https://m.ruliweb.com/{rest}"}],
+      "login_hosts": [],
+      "terms_note": "Mobile twin keeps the board path. Terms unchecked. The available primary terms clause was read on 2026-09-30; the dated clause observation and unresolved scope are recorded in korea-platforms.json. User checks and collection permission remain unresolved; all existing stops apply.",
+      "verified_at": null
+    },
+    {
+      "id": "fmkorea",
+      "hosts": ["www.fmkorea.com", "fmkorea.com"],
+      "platform_family": "community",
+      "path": "^/(?P<post>[0-9]{1,12})/?$",
+      "author_from": "page",
+      "official": [],
+      "alternates": [{"kind": "mobile", "url": "https://m.fmkorea.com/{post}"}],
+      "login_hosts": [],
+      "terms_note": "Terms unchecked: the site's rules bar AI-written posts and bot use of signed-in features; no collection clause for signed-out reading was found. The available primary terms clause was read on 2026-09-30; the dated clause observation and unresolved scope are recorded in korea-platforms.json. User checks and collection permission remain unresolved; all existing stops apply.",
+      "verified_at": null
+    },
+    {
+      "id": "clien",
+      "hosts": [
+        "www.clien.net",
+        "clien.net"
+      ],
+      "platform_family": "community",
+      "author_from": "page",
+      "official": [],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "terms_restricted (confirmed, clien-terms; lift_requires: never): section 13(3) requires the information rights holder's consent. A platform-wide grant does not establish each author's consent, which the reader's host-based lift cannot represent. No request or capture is allowed.",
+      "verified_at": null
+    },
+    {
+      "id": "theqoo",
+      "hosts": ["theqoo.net", "www.theqoo.net"],
+      "platform_family": "community",
+      "author_from": "page",
+      "official": [],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "No known twin. Terms unchecked; some boards are member-only. The available primary terms clause was read on 2026-09-30; the dated clause observation and unresolved scope are recorded in korea-platforms.json. User checks and collection permission remain unresolved; all existing stops apply.",
+      "verified_at": null
+    },
+    {
+      "id": "nate-pann",
+      "hosts": ["pann.nate.com"],
+      "platform_family": "community",
+      "author_from": "page",
+      "official": [],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "Terms unchecked. Anonymous first-person narratives are unverified, as on any board. The available primary terms clause was read on 2026-09-30; the dated clause observation and unresolved scope are recorded in korea-platforms.json. User checks and collection permission remain unresolved; all existing stops apply.",
+      "verified_at": null
+    },
+    {
+      "id": "instiz",
+      "hosts": ["www.instiz.net", "instiz.net"],
+      "platform_family": "community",
+      "author_from": "page",
+      "official": [],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "Terms unchecked; some boards are member-only.",
+      "verified_at": null
+    },
+    {
+      "id": "blind",
+      "hosts": ["www.teamblind.com", "teamblind.com"],
+      "platform_family": "community",
+      "author_from": "page",
+      "official": [],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "Logged-out posts only; company channels and most topics are member-only (auth_gate). Terms unchecked. The available primary terms clause was read on 2026-09-30; the dated clause observation and unresolved scope are recorded in korea-platforms.json. User checks and collection permission remain unresolved; all existing stops apply.",
+      "verified_at": null
+    },
+    {
+      "id": "daangn",
+      "hosts": [
+        "www.daangn.com",
+        "daangn.com"
+      ],
+      "platform_family": "community",
+      "author_from": "page",
+      "official": [],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "terms_restricted (reported, daangn-terms): no request or capture without the user's applicable prior written permission and current terms check. The grant must cover collection, storage, analysis and subsequent processing. Neighbourhood names and nicknames stay out of shared outputs. robots.txt and all other stops still apply after a lift.",
+      "verified_at": null
+    },
+    {
+      "id": "kakao-map",
+      "hosts": ["place.map.kakao.com"],
+      "platform_family": "commerce_reviews",
+      "author_from": "page",
+      "official": [],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "Terms unchecked. The Local API returns places without reviews. Host and URL shapes unverified.",
+      "verified_at": null
+    },
+    {
+      "id": "coupang",
+      "hosts": ["www.coupang.com", "m.coupang.com"],
+      "platform_family": "commerce_reviews",
+      "author_from": "page",
+      "official": [],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "terms_restricted (reported, low confidence): search summaries say the terms restrict automated tools. robots.txt reportedly names ChatGPT-User, an agent token the reader honours. The team's own seller export comes first.",
+      "sources": ["https://byline.network/2026/04/27_1928774/", "https://www.digitalmarketer.co.kr/insights/coupang-robots-txt-partners-strategy"],
+      "verified_at": null
+    },
+    {
+      "id": "youtube",
+      "hosts": ["www.youtube.com", "youtube.com", "m.youtube.com", "youtu.be", "www.youtube-nocookie.com", "youtube-nocookie.com"],
+      "platform_family": "video",
+      "path": "^/(?:watch|(?:shorts|live|embed)/(?P<video>[A-Za-z0-9_-]{11}))/?$",
+      "path_by_host": {"youtu.be": "^/(?P<video>[A-Za-z0-9_-]{11})/?$"},
+      "author_from": "page",
+      "profile_paths": ["channel", "c"],
+      "official": [
+        {"kind": "api", "adapter": "youtube",
+         "doc": "YouTube Data API v3 with the user's own key: videos.list (part=snippet,statistics), then commentThreads.list (part=snippet, textFormat=plainText, order=relevance, maxResults=page_size) following nextPageToken for at most max_pages pages. 1 quota unit per call; the default project quota is 10,000 units a day. The page is never requested.",
+         "auth": "user_key", "env": "REMORSEARCH_YOUTUBE_API_KEY", "env_aliases": ["YOUTUBE_API_KEY"],
+         "id_from": ["video", "q_v"], "id_pattern": "^[A-Za-z0-9_-]{11}$",
+         "url": "https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id={id}&key={key}",
+         "comments_url": "https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&textFormat=plainText&order=relevance&maxResults={page_size}&videoId={id}&key={key}",
+         "page_size": 100, "max_pages": 2, "quota_units_per_call": 1, "quota_reset_tz": "America/Los_Angeles",
+         "retention_days": 30,
+         "policy_note": "YouTube Developer Policies III.E.4.d, read directly on 2026-09-30 at https://developers.google.com/youtube/terms/developer-policies: stored Non-Authorized Data must be deleted or refreshed after 30 calendar days. The user holds the API key and follows the API terms. The adapter sets retention_until to fetch time + 30 days; bundle/report items are deleted or refreshed by the user. Derived-metrics examples remain unverified; items are qualitative evidence only. Keep every item no longer than 30 days and never profile commenters by protected-attribute cues; these remain the skill’s rules.",
+         "sources": ["https://developers.google.com/youtube/v3/docs/videos/list", "https://developers.google.com/youtube/v3/docs/commentThreads/list", "https://developers.google.com/youtube/v3/determine_quota_cost", "https://developers.google.com/youtube/v3/getting-started", "https://developers.google.com/youtube/terms/developer-policies"]}
+      ],
+      "alternates": [],
+      "login_hosts": ["accounts.google.com"],
+      "terms_note": "terms_restricted (confirmed): pages are never read and never captured. Watch, youtu.be, shorts, live and embed URLs are read only through the Data API with the user's own key (official-only mode: the video ID is taken from the URL, the page is never requested). Channel, community, playlist and search pages have no route and stay terms_restricted gaps. API items carry retention_until (30 days), and commenters are never profiled by protected attributes. The quota-reset source was read on 2026-09-30: https://developers.google.com/youtube/v3/determine_quota_cost states midnight Pacific time. Page lifts are disabled by lift_requires: never.",
+      "sources": ["https://www.youtube.com/static?template=terms", "https://developers.google.com/youtube/terms/developer-policies"],
+      "verified_at": null
+    },
+    {
+      "id": "instagram",
+      "hosts": ["www.instagram.com", "instagram.com"],
+      "platform_family": "microblog",
+      "author_from": "path_segment",
+      "official": [],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "terms_restricted (confirmed): Meta's Automated Data Collection Terms. The official routes need Meta App Review or Meta Content Library access; none is implemented.",
+      "verified_at": null
+    },
+    {
+      "id": "threads",
+      "hosts": ["www.threads.com", "threads.com", "www.threads.net", "threads.net"],
+      "platform_family": "microblog",
+      "author_from": "path_segment",
+      "official": [],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "threads.com is the primary host since 2025-04; threads.net redirects there. terms_restricted (confirmed): Meta's Automated Data Collection Terms. Keyword search needs Meta App Review; no route is implemented.",
+      "sources": ["https://techcrunch.com/2025/04/24/threads-officially-moves-to-threads-com-and-updates-its-web-app/"],
+      "verified_at": null
+    },
+    {
+      "id": "app-store",
+      "hosts": [
+        "apps.apple.com"
+      ],
+      "platform_family": "app_store_reviews",
+      "path": "^/(?P<country>[a-z]{2})/app/(?:[^/]{1,200}/)?id(?P<app>[0-9]{5,12})/?$",
+      "author_from": "page",
+      "official": [],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "terms_restricted (confirmed, apple-app-store-terms; lift_requires: never) covers both apps.apple.com pages and itunes.apple.com feeds. The removed customer-review feed was https://itunes.apple.com/{country}/rss/customerreviews/page=1/id={app}/sortby=mostrecent/xml; a 200 response on 2026-09-30 established availability, not research authorization. No feed-specific exception was found in Apple Media Services Terms section F. Use authorized App Store Connect exports for the team's own apps as team_provided files, with app, territory, date and acquisition provenance.",
+      "verified_at": null,
+      "sources": [
+        "https://www.apple.com/kr/legal/internet-services/itunes/kr/terms.html",
+        "https://developer.apple.com/documentation/appstoreconnectapi/customer-reviews"
+      ]
+    },
+    {
+      "id": "google-play",
+      "hosts": ["play.google.com"],
+      "platform_family": "app_store_reviews",
+      "author_from": "page",
+      "official": [],
+      "alternates": [],
+      "login_hosts": ["accounts.google.com"],
+      "terms_note": "Terms unchecked; the general terms reportedly bar automated access against robots.txt instructions, which the reader honours. Reviews sit behind clicks; a render shows only the first few. Prefer the team's own Play Console export (team_provided). The available primary terms clause was read on 2026-09-30; the dated clause observation and unresolved scope are recorded in korea-platforms.json. User checks and collection permission remain unresolved; all existing stops apply.",
+      "verified_at": null
+    },
+    {
+      "id": "reddit",
+      "hosts": [
+        "www.reddit.com",
+        "reddit.com",
+        "old.reddit.com"
+      ],
+      "platform_family": "community",
+      "path": "^/r/(?P<sub>[A-Za-z0-9_]{1,40})/comments/(?P<id>[a-z0-9]{1,12})(?:/(?P<slug>[^/]{0,200}))?/?$",
+      "author_from": "page",
+      "official": [
+        {
+          "kind": "feed",
+          "scope": "all",
+          "url": "https://www.reddit.com/r/{sub}/comments/{id}/.rss",
+          "auth": "none"
+        }
+      ],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "terms_restricted (confirmed, reddit-terms): User Agreement section 7 prohibits scraping without prior written consent. A lift needs the user's current terms check and that written permission; robots.txt still applies to pages and the thread feed.",
+      "verified_at": null
+    },
+    {
+      "id": "hacker-news",
+      "hosts": [
+        "news.ycombinator.com"
+      ],
+      "platform_family": "community",
+      "path": "^/item$",
+      "author_from": "page",
+      "official": [
+        {
+          "kind": "api",
+          "doc": "Official Hacker News Firebase API; no adapter in this version",
+          "auth": "none",
+          "url": "https://hacker-news.firebaseio.com/v0/item/{q_id}.json"
+        }
+      ],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "terms_restricted (confirmed, hackernews-terms; lift_requires: never) for site pages under YC Terms of Use. The documented Firebase API is the official-only route, but no adapter exists, so it reports official_route_unavailable. Its documentation is https://github.com/HackerNews/API. The previously listed Algolia items endpoint is historical provenance only; its usage-policy page was not read.",
+      "verified_at": null
+    },
+    {
+      "id": "x",
+      "hosts": [
+        "x.com",
+        "twitter.com",
+        "mobile.twitter.com"
+      ],
+      "platform_family": "microblog",
+      "path": "^/[A-Za-z0-9_]{1,15}/status/[0-9]{1,25}/?$",
+      "author_from": "path_segment",
+      "official": [],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "terms_restricted (reported, x-terms): a lift needs the user's current entry-specific check and prior written permission. official_route is null. The historical publish.twitter.com/oembed route is not executable: an unauthenticated request returned HTML on 2026-09-30, with no official retirement notice found. robots.txt and all other stops still apply after a lift.",
+      "verified_at": null
+    },
+    {
+      "id": "bluesky",
+      "hosts": ["bsky.app"],
+      "platform_family": "microblog",
+      "path": "^/profile/(?P<handle>[^/]{1,100})/post/(?P<post>[a-z0-9]{1,20})/?$",
+      "author_from": "page",
+      "official": [
+        {"kind": "api", "doc": "Public AppView getPostThread", "auth": "none",
+         "url": "https://public.api.bsky.app/xrpc/app.bsky.feed.getPostThread?uri=at://{handle}/app.bsky.feed.post/{post}"}
+      ],
+      "alternates": [],
+      "login_hosts": [],
+      "terms_note": "Terms read directly on 2026-09-30 (last updated 2025-08-14): no clause prohibiting automated collection was found. robots.txt permits the generic group except /intent/compose and points to the protocol/firehose. Explicit bulk-collection permission and AppView usage-policy documentation remain unverified; no route or stop is changed.",
+      "verified_at": null,
+      "sources": ["https://bsky.social/about/support/tos", "https://bsky.app/robots.txt"],
+      "checked_at": "2026-09-30",
+      "read_via": "direct_fetch"
+    }
+  ],
+  "search_pages": [
+    {"host": "search.naver.com", "path_prefix": "", "reason": "portal search results"},
+    {"host": "search.daum.net", "path_prefix": "", "reason": "portal search results"},
+    {"host": "search.zum.com", "path_prefix": "", "reason": "portal search results"},
+    {"host": "google.com", "path_prefix": "/search", "reason": "web search results"},
+    {"host": "google.co.kr", "path_prefix": "/search", "reason": "web search results"},
+    {"host": "bing.com", "path_prefix": "/search", "reason": "web search results"},
+    {"host": "search.yahoo.com", "path_prefix": "", "reason": "web search results"},
+    {"host": "duckduckgo.com", "path_prefix": "", "query_param": "q", "reason": "web search results"},
+    {"host": "html.duckduckgo.com", "path_prefix": "", "reason": "web search results (the script-free version)"},
+    {"host": "lite.duckduckgo.com", "path_prefix": "", "reason": "web search results (the light version)"},
+    {"host": "search.nate.com", "path_prefix": "", "reason": "portal search results"},
+    {"host": "search.brave.com", "path_prefix": "", "reason": "web search results"},
+    {"host": "ecosia.org", "path_prefix": "/search", "reason": "web search results"},
+    {"host": "startpage.com", "path_prefix": "/do/search", "reason": "web search results"},
+    {"host": "startpage.com", "path_prefix": "/sp/search", "reason": "web search results"},
+    {"host": "yandex.com", "path_prefix": "/search", "reason": "web search results"},
+    {"host": "yandex.ru", "path_prefix": "/search", "reason": "web search results"},
+    {"host": "baidu.com", "path_prefix": "/s", "reason": "web search results"},
+    {"host": "qwant.com", "path_prefix": "", "query_param": "q", "reason": "web search results"},
+    {"host": "search.yahoo.co.jp", "path_prefix": "", "reason": "web search results"}
+  ],
+  "third_party_copies": [
+    {"id": "wayback", "hosts": ["web.archive.org"], "kind": "archive", "target": "path_url", "wayback_for_official": true, "reason": "web archive captures; only past versions of the product's own pages, when the brief allows it"},
+    {"id": "archive-today", "hosts": ["archive.today", "archive.ph", "archive.is", "archive.li", "archive.vn", "archive.fo", "archive.md"], "kind": "archive", "target": "path_url", "reason": "page snapshots made by a third party"},
+    {"id": "translation-proxy", "hosts": ["translate.goog"], "kind": "translation_proxy", "target": "label_host", "reason": "another site's page served through a translation proxy"},
+    {"id": "amp-cache", "hosts": ["cdn.ampproject.org"], "kind": "amp_cache", "target": "amp_path", "reason": "another site's AMP page served from a cache"},
+    {"id": "search-cache", "hosts": ["webcache.googleusercontent.com"], "kind": "search_cache", "target": "query_url", "query_params": ["q"], "reason": "a search engine's cached copy"},
+    {"id": "reader-proxies", "hosts": ["r.jina.ai", "12ft.io"], "kind": "reader_proxy", "target": "path_url", "reason": "another site's page fetched and re-served by a reader or paywall proxy"},
+    {"id": "video-front-ends", "hosts": ["yewtu.be", "inv.nadeko.net", "invidious.nerdvpn.de", "piped.video", "piped.kavin.rocks"], "kind": "front_end", "target": "template", "path": "^/watch/?$", "query": {"v": "^[A-Za-z0-9_-]{11}$"}, "wraps": "https://www.youtube.com/watch?v={v}", "reason": "alternative front ends that show another platform's videos and comments"},
+    {"id": "video-front-end-shape", "hosts": [], "except_hosts": ["youtube.com", "youtu.be", "youtube-nocookie.com", "youtubekids.com"], "kind": "front_end", "target": "template", "path": "^/watch/?$", "query": {"v": "^[A-Za-z0-9_-]{11}$"}, "wraps": "https://www.youtube.com/watch?v={v}", "reason": "any other host that serves /watch?v=<11-character video ID> is treated as a front end of the video platform"},
+    {"id": "microblog-front-ends", "hosts": ["nitter.net", "xcancel.com", "nitter.poast.org"], "kind": "front_end", "target": "none", "reason": "alternative front ends that show another platform's posts"}
+  ],
+  "out_of_scope": [
+    {"host": "discord.com", "path_prefix": "", "reason": "private chat servers"},
+    {"host": "discord.gg", "path_prefix": "", "reason": "private chat invitations"},
+    {"host": "open.kakao.com", "path_prefix": "", "reason": "open chat rooms are joined, not published"},
+    {"host": "band.us", "path_prefix": "", "reason": "member-only groups"},
+    {"host": "t.me", "path_prefix": "", "reason": "chat channels and groups"},
+    {"host": "www.facebook.com", "path_prefix": "/groups", "reason": "groups are member-only"},
+    {"host": "facebook.com", "path_prefix": "/groups", "reason": "groups are member-only"},
+    {"host": "everytime.kr", "path_prefix": "", "reason": "campus community behind student verification (unverified)"}
+  ],
+  "terms_restricted": [
+    {
+      "id": "youtube-terms",
+      "hosts": [
+        "youtube.com",
+        "youtu.be",
+        "youtube-nocookie.com",
+        "youtubekids.com"
+      ],
+      "status": "confirmed",
+      "lift_requires": "never",
+      "restricts": [
+        "automated_collection"
+      ],
+      "official_route": "youtube",
+      "terms_url": "https://www.youtube.com/static?template=terms",
+      "clause": "Permissions and Restrictions: automated access requires YouTube’s prior written permission, except for public search engines following robots.txt.",
+      "read_via": "direct_fetch",
+      "sources": [
+        "https://www.youtube.com/t/terms",
+        "https://www.youtube.com/t/terms?hl=en",
+        "https://developers.google.com/youtube/terms/developer-policies"
+      ],
+      "checked_at": "2026-09-30",
+      "verified_at": null,
+      "note": "Primary terms were read on 2026-09-30. The fetched English versions show different dates (2023-12-15 and the Korean English Courtesy Translation dated 2022-01-05); no effective_from is inferred. No person verified the terms. Page lifts remain disabled by lift_requires: never; comments come only through the packaged Data API route with the user’s own key. Developer Policies III.E.4.d requires stored Non-Authorized Data to be deleted or refreshed after 30 calendar days; read directly on the same date."
+    },
+    {
+      "id": "meta-instagram",
+      "hosts": [
+        "instagram.com",
+        "instagr.am",
+        "ig.me"
+      ],
+      "status": "confirmed",
+      "lift_requires": "never",
+      "restricts": [
+        "automated_collection"
+      ],
+      "official_route": null,
+      "terms_url": "https://www.facebook.com/legal/automated_data_collection_terms",
+      "clause": "Operator robots.txt notice: \"Collection of data on Instagram through automated means is prohibited unless you have express written permission from Instagram\".",
+      "read_via": "direct_fetch",
+      "sources": [
+        "https://www.instagram.com/robots.txt",
+        "https://www.facebook.com/legal/automated_data_collection_terms"
+      ],
+      "checked_at": "2026-09-30",
+      "verified_at": null,
+      "note": "The operator’s robots.txt notice and Meta’s automated-collection clause were read on 2026-09-30. The Instagram help-center terms body and its effective date remain unverified because only a script shell was returned. No person verified the primary page. lift_requires: never keeps page lifts disabled."
+    },
+    {
+      "id": "meta-threads",
+      "hosts": [
+        "threads.com",
+        "threads.net"
+      ],
+      "status": "confirmed",
+      "lift_requires": "never",
+      "restricts": [
+        "automated_collection"
+      ],
+      "official_route": null,
+      "terms_url": "https://www.facebook.com/legal/automated_data_collection_terms",
+      "clause": "Operator robots.txt notice: \"Collection of data on Threads through automated means is prohibited unless you have express written permission from Threads\".",
+      "read_via": "direct_fetch",
+      "sources": [
+        "https://www.threads.com/robots.txt",
+        "https://www.facebook.com/legal/automated_data_collection_terms"
+      ],
+      "checked_at": "2026-09-30",
+      "verified_at": null,
+      "note": "The operator’s robots.txt notice and Meta’s automated-collection clause were read on 2026-09-30. The Threads help-center terms body and its effective date remain unverified because only a script shell was returned. No person verified the primary page. lift_requires: never keeps page lifts disabled."
+    },
+    {
+      "id": "meta-facebook",
+      "hosts": [
+        "facebook.com",
+        "fb.com",
+        "fb.me",
+        "fb.watch",
+        "m.me"
+      ],
+      "status": "confirmed",
+      "lift_requires": "never",
+      "restricts": [
+        "automated_collection"
+      ],
+      "official_route": null,
+      "terms_url": "https://www.facebook.com/legal/automated_data_collection_terms",
+      "clause": "Meta Terms section 3.2 prohibits automated access or collection of Meta product data without prior permission, whether logged in or not. Automated Data Collection Terms section 2 requires express written permission.",
+      "read_via": "direct_fetch",
+      "sources": [
+        "https://www.facebook.com/legal/terms",
+        "https://www.facebook.com/legal/automated_data_collection_terms"
+      ],
+      "checked_at": "2026-09-30",
+      "verified_at": null,
+      "note": "Meta Terms section 3.2 (effective 2025-01-01) and the Automated Data Collection Terms section 2 (effective 2024-10-07) were read on 2026-09-30. No person verified them. Facebook groups remain out of scope. lift_requires: never keeps page lifts disabled."
+    },
+    {
+      "id": "dcinside-terms",
+      "hosts": [
+        "dcinside.com"
+      ],
+      "status": "confirmed",
+      "lift_requires": "written_permission",
+      "effective_from": "2026-07-21",
+      "restricts": [
+        "automated_collection"
+      ],
+      "official_route": null,
+      "terms_url": "https://nstatic.dcinside.com/dc/w/policy/policy_index.html",
+      "terms_urls": [
+        "https://nstatic.dcinside.com/dc/m/policy/policy.html"
+      ],
+      "clause": "제16조①: \"당사의 사전 서면 동의 없이 어떤 형태로든 어떤 목적으로든 본 서비스를 크롤링하는 행위는 명시적으로 금지됩니다.\" 제16조②는 AI 학습에 사전 합의를 요구함.",
+      "read_via": "direct_fetch",
+      "sources": [
+        "https://nstatic.dcinside.com/dc/w/policy/policy_index.html"
+      ],
+      "checked_at": "2026-09-30",
+      "verified_at": null,
+      "note": "Primary terms, effective 2026-07-21, were read on 2026-09-30. Evidence status is confirmed; no person verified the primary page. lift_requires: written_permission still requires the user’s current entry-specific check and applicable prior written consent. robots.txt and all other stops remain independently applicable."
+    },
+    {
+      "id": "naver-cafe-bulk-notice",
+      "hosts": ["cafe.naver.com", "m.cafe.naver.com"],
+      "status": "confirmed",
+      "lift_requires": "written_permission",
+      "effective_from": "2026-08-25",
+      "restricts": ["bulk_collection", "automated_collection"],
+      "official_route": null,
+      "terms_url": "https://notice.naver.com/notices/cafe/33743",
+      "clause": "\"크롤러·봇·스크립트 등 자동화된 방식으로 게시물과 댓글을 대량으로 조회·수집하는 행위\" 금지.",
+      "read_via": "direct_fetch",
+      "sources": ["https://notice.naver.com/notices/cafe/33743"],
+      "checked_at": "2026-10-01",
+      "verified_at": null,
+      "note": "The primary cafe notice was read on 2026-10-01. Its own date is 2026-08-25; 2026-08-31 was the press date. It bans bulk collection and external republication without members’ and the cafe’s consent and asks existing collectors to stop immediately and delete collected data. lift_requires: written_permission requires a current check of this notice and applicable prior written permission. Cafe URLs also meet naver-terms, which needs a separate check; a check of the general terms alone cannot lift the notice. No person verified the primary page."
+    },
+    {
+      "id": "naver-terms",
+      "hosts": ["naver.com", "naver.me", "me2.do"],
+      "status": "confirmed",
+      "lift_requires": "written_permission",
+      "restricts": ["automated_collection"],
+      "official_route": null,
+      "terms_url": "https://policy.naver.com/rules/service.html",
+      "clause": "\"네이버의 사전 허락 없이 자동화된 수단\"을 이용하여 \"네이버 서비스에 게재된 회원의 아이디(ID), 게시물 등을 수집하거나\" 시도해서는 안 됨.",
+      "read_via": "direct_fetch",
+      "sources": ["https://policy.naver.com/rules/service.html", "https://policy.naver.com/policy/search_policy.html"],
+      "checked_at": "2026-10-01",
+      "verified_at": null,
+      "note": "Primary service terms, effective 2025-07-10, were read on 2026-10-01. The separate search-collection policy disallows other search robots collecting databases protected by robots.txt; it shows no effective or revision date, so a September 2026 revision remains unverified. Covers every Naver host, blog RSS and the naver.me/me2.do short links. lift_requires: written_permission requires a current entry-specific user check and applicable prior written permission. No person verified the primary page.",
+      "effective_from": "2025-07-10"
+    },
+    {
+      "id": "coupang-terms",
+      "hosts": ["coupang.com", "coupa.ng"],
+      "status": "reported",
+      "lift_requires": "written_permission",
+      "restricts": ["automated_collection"],
+      "official_route": null,
+      "terms_url": "https://www.coupang.com/np/policies/terms",
+      "clause": "Corporate-site terms (aboutcoupang.com), read through a search limited to that domain: no automated agents or scripts that generate automated searches, requests or queries, or mine data; only public search engine spiders that follow robots.txt may copy pages for an index. The same clause in the coupang.com member terms is seen only in search summaries.",
+      "read_via": "search_summary",
+      "sources": ["https://www.coupang.com/np/policies/terms", "https://www.aboutcoupang.com/ko/terms/", "https://www.digitalmarketer.co.kr/insights/coupang-robots-txt-partners-strategy", "https://byline.network/2026/04/27_1928774/"],
+      "checked_at": "2026-09-29",
+      "verified_at": null,
+      "note": "Low confidence: the clause was read on the corporate site's terms; search summaries say the coupang.com member terms bar agents, robots, scripts and spiders without the company's prior consent, but a search of that page's own index on 2026-09-29 did not show the clause. robots.txt reportedly names ChatGPT-User, which the reader honours as an AI agent fetching for a person. coupa.ng is the operator's short-link host. A primary-source read attempt on 2026-09-30 returned 403 for the shopping terms and robots.txt; neither was reached, so their wording and dates remain unverified."
+    },
+    {
+      "id": "x-terms",
+      "hosts": [
+        "x.com",
+        "twitter.com",
+        "t.co"
+      ],
+      "status": "reported",
+      "lift_requires": "written_permission",
+      "restricts": [
+        "automated_collection"
+      ],
+      "official_route": null,
+      "terms_url": "https://x.com/en/tos",
+      "terms_urls": [
+        "https://x.com/tos",
+        "https://twitter.com/en/tos",
+        "https://twitter.com/tos",
+        "https://x.com/ko/tos",
+        "https://x.com/en/tos/previous/version_21"
+      ],
+      "clause": "Section 4, Misuse of the Services (iii): \"crawling or scraping the Services in any form, for any purpose without our prior written consent is expressly prohibited\".",
+      "read_via": "direct_fetch",
+      "sources": [
+        "https://x.com/tos",
+        "https://x.com/en/tos/previous/version_21",
+        "https://x.com/ko/tos",
+        "https://docs.x.com/x-for-websites/overview"
+      ],
+      "checked_at": "2026-09-30",
+      "verified_at": null,
+      "note": "Primary pages were read by an AI researcher on 2026-09-30, not by a person. The English current v21 is reported effective 2026-01-15, corroborated by its operator-hosted previous/version_21 page; the Korean page reports 2026-04-10. A forthcoming version is reported effective 2026-10-09. These version and language differences remain unverified. Only the listed document aliases can support a check. Covers x.com, twitter.com (including publish.twitter.com) and t.co. An unauthenticated oEmbed request returned HTML on 2026-09-30; separate bare-endpoint probes returned 404. No retirement notice was found. The executable oEmbed route is removed, including after a lift, and official_route remains null.",
+      "effective_from": "2026-01-15",
+      "reported_versions": [
+        {
+          "terms_url": "https://x.com/tos",
+          "version": "21",
+          "effective_from": "2026-01-15",
+          "status": "reported",
+          "verified_at": null
+        },
+        {
+          "terms_url": "https://x.com/ko/tos",
+          "version": null,
+          "effective_from": "2026-04-10",
+          "status": "reported",
+          "verified_at": null
+        },
+        {
+          "terms_url": "https://x.com/tos",
+          "version": null,
+          "effective_from": "2026-10-09",
+          "status": "reported",
+          "verified_at": null
+        }
+      ]
+    },
+    {
+      "id": "daangn-terms",
+      "hosts": [
+        "daangn.com"
+      ],
+      "status": "reported",
+      "lift_requires": "written_permission",
+      "effective_from": "2026-01-02",
+      "restricts": [
+        "automated_collection",
+        "ai_input",
+        "storage"
+      ],
+      "official_route": null,
+      "terms_url": "https://www.daangn.com/policy/terms/",
+      "clause": "데이터베이스에 대한 보호: \"당근의 명시적인 사전 서면 동의 없이 자동화된 도구\"를 활용한 \"데이터 수집·복제·저장·배포·출판·분석·색인화·수정·파생 저작물 생성\" 금지.",
+      "read_via": "direct_fetch",
+      "sources": [
+        "https://www.daangn.com/policy/terms/",
+        "https://terms-proxy.kr.karrotwebview.com/page-data/policy/terms/page-data.json"
+      ],
+      "note": "An AI researcher read the operator's Gatsby page-data on 2026-09-30 and reported the 2026-01-02 effective date. The declared terms page did not load for a second reader; provenance remains reported and no person verified it. Written permission must cover the intended collection, storage, analysis and subsequent processing.",
+      "checked_at": "2026-09-30",
+      "verified_at": null
+    },
+    {
+      "id": "tiktok-terms",
+      "hosts": [
+        "tiktok.com"
+      ],
+      "status": "confirmed",
+      "lift_requires": "never",
+      "effective_from": "2020-08-19",
+      "restricts": [
+        "automated_collection"
+      ],
+      "official_route": null,
+      "terms_url": "https://www.tiktok.com/legal/page/row/terms-of-service/ko-KR",
+      "clause": "제5조: \"본 서비스로부터 정보를 수집하기 위하여, 또는 서비스와 상호작용하기 위하여 자동화된 스크립트를 이용하는 것\" 금지.",
+      "read_via": "direct_fetch",
+      "sources": [
+        "https://www.tiktok.com/legal/page/row/terms-of-service/ko-KR"
+      ],
+      "note": "An AI researcher read the ROW Korean terms on 2026-09-30. The automation clause has no permission exception; a separate commercial-use exception does not lift it. No person verified the page. The research did not independently establish short-link operators; tiktok.com covers its subdomains, and every redirect is checked before contact.",
+      "checked_at": "2026-09-30",
+      "verified_at": null
+    },
+    {
+      "id": "clien-terms",
+      "hosts": [
+        "clien.net"
+      ],
+      "status": "confirmed",
+      "lift_requires": "never",
+      "effective_from": "2019-12-04",
+      "restricts": [
+        "automated_collection"
+      ],
+      "official_route": null,
+      "terms_url": "https://www.clien.net/service/cs/conditions",
+      "clause": "제13조③: \"서비스를 통해 얻은 정보를 그 정보 권리자의 동의없이 수집, 복제, 배포할 수 없습니다.\"",
+      "read_via": "direct_fetch",
+      "sources": [
+        "https://www.clien.net/service/cs/conditions"
+      ],
+      "note": "An AI researcher read the primary clause on 2026-09-30; no person verified it. The required consent belongs to each information rights holder. A platform permission cannot supply every author's consent, and the host-based permission record cannot enforce content-specific rights clearance, so page lifts are disabled.",
+      "checked_at": "2026-09-30",
+      "verified_at": null
+    },
+    {
+      "id": "apple-app-store-terms",
+      "hosts": [
+        "apps.apple.com",
+        "itunes.apple.com"
+      ],
+      "status": "confirmed",
+      "lift_requires": "never",
+      "restricts": [
+        "automated_collection",
+        "ai_input"
+      ],
+      "official_route": null,
+      "terms_url": "https://www.apple.com/kr/legal/internet-services/itunes/kr/terms.html",
+      "clause": "F: \"소프트웨어, 기기, 자동화된 프로세스 또는 이와 유사하거나 동등한 수동 프로세스\"를 사용한 \"스크래핑, 복사, 측정, 분석 또는 모니터링\" 금지.",
+      "read_via": "direct_fetch",
+      "sources": [
+        "https://www.apple.com/kr/legal/internet-services/itunes/kr/terms.html",
+        "https://www.apple.com/legal/internet-services/itunes/",
+        "https://developer.apple.com/documentation/appstoreconnectapi/customer-reviews"
+      ],
+      "last_updated": "2026-09-14",
+      "note": "AI researchers read section F on 2026-09-30; no person verified it. 2026-09-14 is the stated last update, not an established effective date. No customer-review feed exception was found. The removed itunes.apple.com customer-review feed returned 200 in the research, which does not establish permitted research use. Authorized own-app App Store Connect exports remain team_provided files; competitor reviews remain a coverage gap.",
+      "checked_at": "2026-09-30",
+      "verified_at": null
+    },
+    {
+      "id": "reddit-terms",
+      "hosts": [
+        "reddit.com",
+        "redd.it"
+      ],
+      "status": "confirmed",
+      "lift_requires": "written_permission",
+      "effective_from": "2026-07-01",
+      "restricts": [
+        "automated_collection"
+      ],
+      "official_route": null,
+      "terms_url": "https://www.redditinc.com/policies/user-agreement",
+      "clause": "User Agreement section 7: \"scraping the Services without Reddit's prior written consent is prohibited\".",
+      "read_via": "direct_fetch",
+      "sources": [
+        "https://www.redditinc.com/policies/user-agreement",
+        "https://www.reddit.com/robots.txt",
+        "https://www.redditinc.com/policies/data-api-terms",
+        "https://old.reddit.com/robots.txt"
+      ],
+      "note": "An AI researcher read section 7 on 2026-09-30; no person verified it. Every lift needs the user's current entry-specific check and applicable prior written consent. robots.txt remains an independent stop after permission; the conditional crawl allowance and a published RSS feed do not waive it. redd.it is the operator's short-link domain. Both www.reddit.com and old.reddit.com robots.txt were read directly on 2026-09-30 and showed User-agent: * / Disallow: /.",
+      "checked_at": "2026-09-30",
+      "verified_at": null
+    },
+    {
+      "id": "hackernews-terms",
+      "hosts": [
+        "news.ycombinator.com"
+      ],
+      "status": "confirmed",
+      "lift_requires": "never",
+      "restricts": [
+        "automated_collection"
+      ],
+      "official_route": "hacker-news",
+      "terms_url": "https://www.ycombinator.com/legal",
+      "clause": "Terms of Use: \"you will not engage in or use any data mining, robots, scraping or similar data gathering or extraction methods\".",
+      "read_via": "direct_fetch",
+      "sources": [
+        "https://www.ycombinator.com/legal",
+        "https://github.com/HackerNews/API",
+        "https://news.ycombinator.com/robots.txt"
+      ],
+      "note": "An AI researcher read the primary terms on 2026-09-30; no person verified them. No terms effective date was shown. The separately documented official Firebase API can run only in official-only mode once an adapter exists; today it reports official_route_unavailable and never falls back to a site page. robots.txt was read directly on 2026-09-30: Crawl-delay: 30 and internal action/login paths disallowed; item pages were not listed. This observation does not lift the terms stop.",
+      "checked_at": "2026-09-30",
+      "verified_at": null
+    }
+  ],
+  "discovery": [
+    {
+      "id": "naver-search-open-api",
+      "doc": "Naver Search Open API on openapi.naver.com (blog, cafearticle, kin, news); legacy since the move to NAVER API HUB",
+      "enabled": false,
+      "reason": "off until the owner reads the current terms",
+      "terms_note": "Developer-center terms read directly on 2026-09-30: independent, unprocessed search-result display with Naver/source attribution and original links; no AI input/training/improvement/evaluation/exposure, third-party provision/sale, advertising revenue or caching outside the stated exceptions. New applications ended after 2026-07-30 24:00; eligible existing users receive the API until 2027-06-30 24:00. The separately reported API HUB 2026-09-07 effective date remains unverified.",
+      "legacy_until": "2027-06-30",
+      "endpoints": {
+        "blog": "https://openapi.naver.com/v1/search/blog.json",
+        "cafearticle": "https://openapi.naver.com/v1/search/cafearticle.json",
+        "kin": "https://openapi.naver.com/v1/search/kin.json",
+        "news": "https://openapi.naver.com/v1/search/news.json"
+      },
+      "auth": {"type": "user_key", "env": ["REMORSEARCH_NAVER_CLIENT_ID", "REMORSEARCH_NAVER_CLIENT_SECRET"],
+               "headers": {"X-Naver-Client-Id": "REMORSEARCH_NAVER_CLIENT_ID", "X-Naver-Client-Secret": "REMORSEARCH_NAVER_CLIENT_SECRET"}},
+      "never_call": [{"host": "openapi.naver.com", "path_prefix": "/v1/search"}],
+      "returns": "leads only (titles, snippets, links); never quoted as evidence",
+      "sources": ["https://www.tokenpost.kr/news/ai/403521", "https://www.dataeconomy.co.kr/news/articleView.html?idxno=42307", "https://www.digitaltoday.co.kr/en/view/100547/naver-tightens-access-to-cafe-posts-and-search-api-data", "https://github.com/Mode1221/CoursePilot/pull/406", "https://developers.naver.com/products/terms/"],
+      "verified_at": null,
+      "checked_at": "2026-09-30",
+      "read_via": "direct_fetch",
+      "note": "The developer-center terms were read directly on 2026-09-30 at https://developers.naver.com/products/terms/. Search results are for display, independently and unprocessed, with Naver/source attribution and original links. AI input, training, improvement, evaluation or exposure, third-party provision/sale and caching outside the stated exceptions are prohibited. Device storage is limited to the shorter of 24 hours or a new query; server history storage to 21 days. The 2026-07-31 addendum ends new applications after 2026-07-30 24:00 and supplies eligible existing users until 2027-06-30 24:00; shopping, books and academic data ended after 2026-07-31 24:00. NAVER API HUB’s own terms and the reported 2026-09-07 effective date remain unverified. This discovery route stays off until the owner reads its current terms."
+    },
+    {
+      "id": "naver-api-hub",
+      "doc": "NAVER API HUB on Naver Cloud Platform: the search API's new home (search/v1/{service}), with the same parameters reported",
+      "enabled": false,
+      "reason": "off until the owner reads the current terms",
+      "terms_note": "API HUB’s own terms and the reported 2026-09-07 effective date were not reached. Developer-center terms were read separately on 2026-09-30; they do not establish the current API HUB terms. Every API on this host stays off.",
+      "endpoints": {"search": "https://naverapihub.apigw.ntruss.com/search/v1/{service}"},
+      "auth": {"type": "user_key", "env": ["REMORSEARCH_NCP_APIGW_API_KEY_ID", "REMORSEARCH_NCP_APIGW_API_KEY"],
+               "headers": {"X-NCP-APIGW-API-KEY-ID": "REMORSEARCH_NCP_APIGW_API_KEY_ID", "X-NCP-APIGW-API-KEY": "REMORSEARCH_NCP_APIGW_API_KEY"}},
+      "never_call": [{"host": "naverapihub.apigw.ntruss.com", "path_prefix": ""}],
+      "returns": "leads only (titles, snippets, links); never quoted as evidence",
+      "sources": ["https://guide.ncloud-docs.com/docs/apihub-overview", "https://github.com/Mode1221/CoursePilot/pull/406", "https://developers.naver.com/products/terms/"],
+      "verified_at": null,
+      "note": "The developer-center terms were read directly on 2026-09-30 at https://developers.naver.com/products/terms/. Search results are for display, independently and unprocessed, with Naver/source attribution and original links. AI input, training, improvement, evaluation or exposure, third-party provision/sale and caching outside the stated exceptions are prohibited. Device storage is limited to the shorter of 24 hours or a new query; server history storage to 21 days. The 2026-07-31 addendum ends new applications after 2026-07-30 24:00 and supplies eligible existing users until 2027-06-30 24:00; shopping, books and academic data ended after 2026-07-31 24:00. NAVER API HUB’s own terms and the reported 2026-09-07 effective date remain unverified. This discovery route stays off until the owner reads its current terms."
+    },
+    {
+      "id": "naver-datalab",
+      "doc": "Naver DataLab search-trend API: a relative interest index by device, gender and age band, never a size",
+      "enabled": false,
+      "reason": "off until the owner reads the current terms",
+      "terms_note": "The developer-center addendum was read on 2026-09-30 and names Search Trend API and Shopping Insight API in the migration/new-application rules. Whether API HUB’s AI restrictions cover this route remains unverified; it stays off.",
+      "endpoints": {"search_trend_legacy": "https://openapi.naver.com/v1/datalab/search"},
+      "auth": {"type": "user_key", "env": ["REMORSEARCH_NAVER_CLIENT_ID", "REMORSEARCH_NAVER_CLIENT_SECRET"],
+               "headers": {"X-Naver-Client-Id": "REMORSEARCH_NAVER_CLIENT_ID", "X-Naver-Client-Secret": "REMORSEARCH_NAVER_CLIENT_SECRET"}},
+      "never_call": [{"host": "openapi.naver.com", "path_prefix": "/v1/datalab"}],
+      "returns": "an interest index (grade C estimate of interest, not of users)",
+      "sources": ["https://github.com/naver/naver-openapi-guide/blob/master/ko/naver-openapi-swagger.yaml", "https://developers.naver.com/products/terms/"],
+      "verified_at": null,
+      "note": "The developer-center terms were read directly on 2026-09-30 at https://developers.naver.com/products/terms/. Search results are for display, independently and unprocessed, with Naver/source attribution and original links. AI input, training, improvement, evaluation or exposure, third-party provision/sale and caching outside the stated exceptions are prohibited. Device storage is limited to the shorter of 24 hours or a new query; server history storage to 21 days. The 2026-07-31 addendum ends new applications after 2026-07-30 24:00 and supplies eligible existing users until 2027-06-30 24:00; shopping, books and academic data ended after 2026-07-31 24:00. NAVER API HUB’s own terms and the reported 2026-09-07 effective date remain unverified. This discovery route stays off until the owner reads its current terms."
+    },
+    {
+      "id": "kakao-daum-search",
+      "doc": "Kakao Daum Search REST API (web, video, image, blog, book, cafe); exact paths unverified",
+      "enabled": false,
+      "reason": "off until the owner reads the current terms",
+      "terms_note": "Operating policy section 5, read directly on 2026-09-30, limits caching to improving the app’s user experience and keeping data current, and restricts unauthorized copying, reuse and provision to others. Permission for this research’s model input remains unresolved; the route stays off.",
+      "endpoints": {
+        "web": "https://dapi.kakao.com/v2/search/web",
+        "vclip": "https://dapi.kakao.com/v2/search/vclip",
+        "image": "https://dapi.kakao.com/v2/search/image",
+        "blog": "https://dapi.kakao.com/v2/search/blog",
+        "cafe": "https://dapi.kakao.com/v2/search/cafe",
+        "book": "https://dapi.kakao.com/v3/search/book"
+      },
+      "auth": {"type": "user_key", "env": ["REMORSEARCH_KAKAO_REST_API_KEY"],
+               "headers": {"Authorization": "KakaoAK {REMORSEARCH_KAKAO_REST_API_KEY}"}},
+      "never_call": [{"host": "dapi.kakao.com", "path_prefix": "/v2/search"}, {"host": "dapi.kakao.com", "path_prefix": "/v3/search"}],
+      "returns": "leads only (titles, snippets, links); never quoted as evidence",
+      "sources": ["https://developers.kakao.com/terms/ko/site-policies", "https://devtalk.kakao.com/t/api-llm/151458", "https://developers.kakao.com/docs/latest/ko/daum-search/dev-guide", "https://developers.kakao.com/terms/latest/ko/site-policies", "https://developers.kakao.com/docs/latest/ko/getting-started/quota"],
+      "verified_at": null,
+      "checked_at": "2026-09-30",
+      "read_via": "direct_fetch",
+      "note": "Official next-search/quota/site-policy documents were read directly on 2026-09-30. The quota table lists Daum search at 50,000/day and each search type at 30,000/day, subject to change. Site Policies section 5 limits caching to improving the app’s user experience and keeping data current; use or provision without prior approval is restricted. A next-search attribution obligation and a search-specific paid conversion rule were not found. This route remains off until the owner reads the current terms."
+    },
+    {
+      "id": "youtube-data-api-search",
+      "doc": "YouTube Data API v3 search.list (100 quota units per call)",
+      "enabled": false,
+      "reason": "planned: no adapter in this version",
+      "endpoints": {"search": "https://www.googleapis.com/youtube/v3/search"},
+      "auth": {"type": "user_key", "env": ["REMORSEARCH_YOUTUBE_API_KEY"], "env_aliases": ["YOUTUBE_API_KEY"]},
+      "never_call": [{"host": "www.googleapis.com", "path_prefix": "/youtube/v3/search"}],
+      "returns": "leads only (titles, snippets, links); never quoted as evidence",
+      "sources": ["https://developers.google.com/youtube/v3/getting-started"],
+      "verified_at": null
+    }
+  ]
+}
