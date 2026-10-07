@@ -1,0 +1,68 @@
+{
+  "entrypoint_remap": {
+    "SKILL.md": "SOURCE.md"
+  },
+  "files": {
+    "SKILL.md": {
+      "bytes": 5979,
+      "sha256": "9a5d8189be3613dec289c0b1b4c2d6e59eacc1b02c7c1aef133cd4346f6d1ba9"
+    },
+    "references/cache-archive.md": {
+      "bytes": 2682,
+      "sha256": "4abe85d2083881871a7e840754b7a82d27592c0108f583493f33002705e0fe6f"
+    },
+    "references/fallback.md": {
+      "bytes": 6185,
+      "sha256": "ae8c745bcfaa82835298a17bad814012e65cb7a129b6a7812541bfdecc4bfbbe"
+    },
+    "references/jina.md": {
+      "bytes": 3402,
+      "sha256": "1ddd2ac5a05596a4862d3cc7b3f9b279d00e4f98495fba4a2c851cf06a69ffa7"
+    },
+    "references/json-api.md": {
+      "bytes": 3578,
+      "sha256": "ec58e38953ac8da7e448b420334d13b831d9405d8dba217a8d777672525aefa4"
+    },
+    "references/media.md": {
+      "bytes": 3550,
+      "sha256": "3533b9b9f7b6c3183d2bb2630e654ed799a92a7b7dda7fd489be001dcc401edb"
+    },
+    "references/metadata.md": {
+      "bytes": 2984,
+      "sha256": "9a32c65befc2b2e0db0861b400fd596d4a83485abd82d4dba00e17e128f8b420"
+    },
+    "references/naver.md": {
+      "bytes": 3391,
+      "sha256": "1de0ecd0d4244f253538b6b197adf6e72e21e35c137b2f956af06a4c5804e942"
+    },
+    "references/playwright.md": {
+      "bytes": 4645,
+      "sha256": "b4a37a344c93b5cf837c6cbb9feee15fc687d39086a7302361713c13de234627"
+    },
+    "references/public-api.md": {
+      "bytes": 3520,
+      "sha256": "c0cf68114fb8ec10deb70ca65b127738fa32f7a58a2a920419b343fd6ad1a563"
+    },
+    "references/rss.md": {
+      "bytes": 3017,
+      "sha256": "b1e3c2aec7dc3ea9ac3b6c022432a70b7451c820e899387a7ee47c1195fbcfb4"
+    },
+    "references/tls-impersonate.md": {
+      "bytes": 6444,
+      "sha256": "33e3bd1c9cb790fd3bf1f490d0b0361a39003435de23b8686048bc1e3c25b328"
+    },
+    "references/twitter.md": {
+      "bytes": 3382,
+      "sha256": "bccfb77c1e88f7b4b429da33068c9616d49028d0287066bc911620e67432e0d2"
+    }
+  },
+  "snapshot_date": "2026-10-02",
+  "source_note": "Original installed toolkit bytes are preserved. The installed input contained no license; the upstream MIT notice was retrieved separately and is retained verbatim. This records the attributed snapshot, not a live comparison with the upstream repository. It does not assign this license to unrelated or independently modified input.",
+  "source_repository": "https://github.com/fivetaku/insane-search",
+  "upstream_license": {
+    "path": "upstream-LICENSE",
+    "retrieved_on": "2026-10-02",
+    "sha256": "e343d30bc6631a1c8377b7aac26e7b1c5b38366913a98ef71fe6861fe812dcd4",
+    "source": "https://github.com/fivetaku/insane-search/blob/main/LICENSE"
+  }
+}

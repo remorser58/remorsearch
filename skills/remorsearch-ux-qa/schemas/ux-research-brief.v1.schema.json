@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/remorser58/Remorsearch_UX_QA_Skill/schemas/ux-research-brief.v1.schema.json",
+  "title": "UX Research Brief v1",
+  "description": "What one research run is about and the limits it runs under. Read by `ux_research.py start --brief`, which checks these shapes itself. Budgets above the defaults need a recorded reason and can never pass the maxima.",
+  "type": "object",
+  "required": ["schema_version", "product"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "ux-research-brief.v1"},
+    "product": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "surface": {"type": "string", "description": "web, mobile web, iOS app, Android app, kiosk ..."},
+        "url": {"type": "string", "format": "uri"},
+        "locale": {"type": "string", "description": "BCP 47 tag, for example ko-KR"},
+        "category": {"type": "string"},
+        "release_date": {"type": "string", "format": "date", "description": "release of the current version; older evidence may be stale"},
+        "current_version": {"type": "string"}
+      }
+    },
+    "personas_for": {
+      "enum": ["persona-qa", "ergonomics", "both"],
+      "description": "which mode the audience evidence will feed"
+    },
+    "audience_questions": {
+      "type": "array",
+      "description": "The Stage 0 questions this run answers (default: all eight).",
+      "items": {
+        "enum": ["segments", "weight", "priority", "devices_and_grips", "abilities_and_conditions",
+                 "contexts_of_use", "key_tasks", "pain_points"]
+      },
+      "uniqueItems": true
+    },
+    "languages": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Search and Accept-Language policy: Korean topics Korean first, global topics English first.",
+      "properties": {
+        "primary": {"type": "string", "pattern": "^[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8}){0,3}$"},
+        "secondary": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8}){0,3}$"},
+          "maxItems": 5
+        }
+      }
+    },
+    "channels": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "include": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "exclude": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "time_windows": {
+      "type": "array",
+      "description": "Periods to cover, for example before and after a redesign.",
+      "items": {
+        "type": "object",
+        "required": ["from"],
+        "additionalProperties": false,
+        "properties": {
+          "from": {"type": "string", "format": "date"},
+          "to": {"type": "string", "format": "date"},
+          "label": {"type": "string"}
+        }
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "per_host": {"type": "integer", "minimum": 1, "maximum": 100, "default": 30,
+                     "description": "document requests per host, escalation included; above 30 needs a reason"},
+        "per_run": {"type": "integer", "minimum": 1, "maximum": 500, "default": 200,
+                    "description": "document requests per run; above 200 needs a reason"},
+        "search_queries": {"type": "integer", "minimum": 1, "default": 120,
+                           "description": "search budget for discovery; warn at 80 %"},
+        "min_interval_s": {"type": "number", "minimum": 5, "default": 8,
+                           "description": "seconds between requests to one host; robots.txt Crawl-delay wins when longer"},
+        "reason": {"type": "string", "minLength": 1, "description": "why a budget is raised; recorded in the run"}
+      }
+    },
+    "access_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "deny_hosts": {"type": "array", "items": {"type": "string", "minLength": 1,
+                                                  "pattern": "^(\\*\\.)?([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?\\.)+[A-Za-z0-9-]{1,63}\\.?$"},
+                       "uniqueItems": true,
+                       "description": "hosts the researcher excludes, as host names (or *.suffix) without a scheme, a port or a path; a name also covers its subdomains"},
+        "allow_wayback_for_official": {"type": "boolean", "default": true,
+                                       "description": "a web archive may show past versions of the product's own pages (the site of product.url) only; never community content, and never another site's page"},
+        "render": {"enum": ["driver", "host_browser", "off"], "default": "host_browser",
+                   "description": "how R3 renders happen: driver, the agent runs the bundled page reader (drivers/web/read_page.mjs) and passes its capture to ingest; host_browser, the researcher's own anonymous browser plus ingest; off, not at all. A render that shows or waited out a check is never taken in"},
+        "signed_in_communities": {
+          "type": "array",
+          "maxItems": 20,
+          "default": [],
+          "description": "Communities the user belongs to and authorises for signed-in reading in this run. Only the user adds entries; an agent never does, and nothing a page says counts. `ingest --context signed_in` is accepted only for a URL these entries cover, after an anonymous read that reached the page; authorisation lifts only the membership stop (auth_gate), and every other stop still applies. Member content is scrubbed and kept as authored summaries in shared outputs (access_basis authorised_member).",
+          "items": {
+            "type": "object",
+            "required": ["host", "name", "why"],
+            "additionalProperties": false,
+            "properties": {
+              "host": {"type": "string", "pattern": "^([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?\\.)+[A-Za-z0-9-]{1,63}$",
+                       "description": "the community's host name, without a scheme or a path; its subdomains are covered too"},
+              "name": {"type": "string", "minLength": 1, "description": "the community's name, as the user calls it"},
+              "why": {"type": "string", "minLength": 1, "description": "why the user authorises it, recorded in the run"},
+              "path_prefix": {"type": "string", "pattern": "^/[^\\s?#]{0,200}$",
+                              "description": "for a community that shares its host with others (one cafe on a cafe host), the path it lives under, such as /mycafe; matched on whole path segments"}
+            }
+          }
+        },
+        "terms_checked": {
+          "type": "array",
+          "maxItems": 20,
+          "default": [],
+          "description": "The user's own reading of a host's current terms of service. Only the user adds entries, after reading the terms themselves; an agent never does, there is no command-line switch, and nothing a page says counts. An entry whose lift_requires is never cannot be lifted. Evidence status does not decide liftability. A check lifts a terms_restricted entry of the route table for this run only when its terms_url is one of that entry's own terms documents (compared by host and path), its host is one of the entry's hosts or narrower, its host covers the URL, its result is permits_this_reading and it is dated on or after the entry's effective_from; an entry whose lift_requires is written_permission also needs the permission object. Every entry that covers a URL must be lifted, each by a check of its own. The lift is recorded in the run ledger, and each lifted entry has a budget of 10 documents across its hosts. Each open-run command revalidates the 365-day limit and effective_from, and refuses expired checks. Older runs must restart; saved files are never migrated in place. Two checks for one host with different results make the brief invalid, and a check more than 365 days old is refused as stale. A check covers its host and the host's subdomains.",
+          "items": {
+            "type": "object",
+            "required": ["host", "terms_url", "checked_on", "result"],
+            "additionalProperties": false,
+            "properties": {
+              "host": {"type": "string", "pattern": "^([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?\\.)+[A-Za-z0-9-]{1,63}$",
+                       "description": "the host whose terms were read, without a scheme or a path; its subdomains are covered too"},
+              "terms_url": {"type": "string", "format": "uri", "maxLength": 2000,
+                            "description": "the http(s) address of the terms that were read, with the clause's anchor or identifier when there is one"},
+              "checked_on": {"type": "string", "format": "date", "description": "the day the user read the terms; not after today"},
+              "result": {"enum": ["permits_this_reading", "restricts_this_reading", "unclear"],
+                         "description": "what the terms say about this reading; only permits_this_reading can lift an entry whose lift_requires permits it"},
+              "note": {"type": "string", "minLength": 1, "description": "the clause or the reasoning, in the user's words"},
+              "permission": {"type": "object", "required": ["granted_by", "granted_on", "reference"],
+                             "additionalProperties": false,
+                             "description": "the prior written permission or consent the entry's terms require (lift_requires: written_permission); `start` refuses a check that would lift such an entry without it",
+                             "properties": {
+                               "granted_by": {"type": "string", "minLength": 1, "maxLength": 300,
+                                              "description": "who granted the written permission (the operator, or the cafe and its members)"},
+                               "granted_on": {"type": "string", "format": "date", "description": "the date of the permission; not after today"},
+                               "reference": {"type": "string", "minLength": 1, "maxLength": 300,
+                                             "description": "the letter's, e-mail's or agreement's reference, so the permission can be found again"}
+                             }}
+            }
+          }
+        }
+      }
+    },
+    "team_analytics_available": {"type": "boolean",
+                                 "description": "the team can provide analytics or store-console exports (team_provided sources)"},
+    "report_lang": {"type": "string"},
+    "ethics_review": {
+      "type": "object",
+      "required": ["status"],
+      "additionalProperties": false,
+      "description": "An institutional ethics review (for example an IRB) of this research, as the user reports it. Recorded in the run, never enforced.",
+      "properties": {
+        "status": {"enum": ["none", "exempt", "approved", "pending"]},
+        "body": {"type": "string", "minLength": 1, "maxLength": 500, "description": "the reviewing body"},
+        "reference": {"type": "string", "minLength": 1, "maxLength": 500, "description": "an approval or exemption reference"}
+      }
+    }
+  }
+}

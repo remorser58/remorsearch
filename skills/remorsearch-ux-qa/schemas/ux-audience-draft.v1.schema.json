@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/remorser58/Remorsearch_UX_QA_Skill/schemas/ux-audience-draft.v1.schema.json",
+  "title": "UX Audience Draft v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "completion",
+    "audience_id",
+    "product",
+    "bundle_id",
+    "gate_bundle_input_sha256",
+    "gate_process_input_sha256",
+    "sources",
+    "segments",
+    "value_provenance",
+    "bounds",
+    "withheld",
+    "todos",
+    "mode"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "ux-audience-draft.v1"},
+    "completion": {"const": "incomplete"},
+    "audience_id": {"type": "string", "minLength": 1},
+    "product": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "surface": {"type": "string", "minLength": 1},
+        "locale": {"type": "string", "minLength": 1},
+        "category": {"type": "string", "minLength": 1},
+        "url": {"type": ["string", "null"], "minLength": 1},
+        "brief_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "bundle_id": {"type": "string", "minLength": 1},
+    "gate_bundle_input_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "gate_process_input_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sources": {"type": "array", "items": {"$ref": "#/$defs/source"}, "minItems": 0, "uniqueItems": true},
+    "segments": {"type": "array", "items": {"$ref": "#/$defs/segment"}, "minItems": 0, "uniqueItems": true},
+    "value_provenance": {"type": "array", "items": {"$ref": "#/$defs/valueProvenance"}, "minItems": 0, "uniqueItems": true},
+    "bounds": {"type": "array", "items": {"$ref": "#/$defs/bound"}, "minItems": 0, "uniqueItems": true},
+    "withheld": {"type": "array", "items": {"$ref": "#/$defs/withheld"}, "minItems": 0, "uniqueItems": true},
+    "todos": {"type": "array", "items": {"$ref": "#/$defs/todo"}, "minItems": 0, "uniqueItems": true},
+    "mode": {"enum": ["live", "fixture"]}
+  },
+  "description": "Non-composable research draft. Missing ages/devices/tasks remain todos, never fabricated completed-audience fields. Gate checks exact typed value joins.",
+  "$defs": {
+    "source": {
+      "type": "object",
+      "required": ["source_id", "type", "title", "url", "accessed_at", "bundle_ref"],
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "type": {
+          "enum": [
+            "product_analytics",
+            "survey",
+            "interview",
+            "usability_test",
+            "support_tickets",
+            "official_statistics",
+            "research_paper",
+            "market_report",
+            "competitor",
+            "official_docs",
+            "product_brief",
+            "community",
+            "app_store_reviews",
+            "expert_judgment"
+          ]
+        },
+        "title": {"type": "string", "minLength": 1},
+        "url": {"type": ["string", "null"], "minLength": 1},
+        "accessed_at": {"$ref": "ux-reader-return.v1.schema.json#/$defs/timestamp"},
+        "bundle_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "segment": {
+      "type": "object",
+      "required": ["segment_id", "existence_claim_ids", "values"],
+      "additionalProperties": false,
+      "properties": {
+        "segment_id": {"type": "string", "minLength": 1},
+        "existence_claim_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+        "values": {"type": "object", "additionalProperties": {}}
+      }
+    },
+    "valueProvenance": {
+      "type": "object",
+      "required": [
+        "join",
+        "value",
+        "basis",
+        "bundle_id",
+        "claim_ids",
+        "evidence_ids",
+        "source_ids",
+        "observation_ids",
+        "input_sha256s",
+        "decision_ref",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "join": {"$ref": "ux-reader-return.v1.schema.json#/$defs/join"},
+        "value": {},
+        "basis": {"enum": ["research_claim", "owner_decision", "unknown"]},
+        "bundle_id": {"type": "string", "minLength": 1},
+        "claim_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true},
+        "evidence_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true},
+        "source_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true},
+        "observation_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true},
+        "input_sha256s": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+        "decision_ref": {"type": ["string", "null"], "minLength": 1},
+        "reason": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"basis": {"const": "research_claim"}}, "required": ["basis"]},
+          "then": {
+            "properties": {"claim_ids": {"minItems": 1}, "input_sha256s": {"minProperties": 1}, "decision_ref": {"type": "null"}}
+          },
+          "else": {
+            "properties": {
+              "claim_ids": {"maxItems": 0},
+              "evidence_ids": {"maxItems": 0},
+              "source_ids": {"maxItems": 0},
+              "observation_ids": {"maxItems": 0},
+              "input_sha256s": {"maxProperties": 0}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"basis": {"const": "owner_decision"}}, "required": ["basis"]},
+          "then": {"properties": {"decision_ref": {"type": "string", "minLength": 1}}},
+          "else": {"properties": {"decision_ref": {"type": "null"}}}
+        }
+      ]
+    },
+    "bound": {
+      "type": "object",
+      "required": ["join", "value", "claim_ids", "evidence_ids", "denominator", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "join": {"$ref": "ux-reader-return.v1.schema.json#/$defs/join"},
+        "value": {"type": "string", "minLength": 1},
+        "claim_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+        "evidence_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+        "denominator": {"$ref": "ux-reader-return.v1.schema.json#/$defs/denominator"},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "todo": {
+      "type": "object",
+      "required": ["segment_id", "join", "reason", "completion_sources"],
+      "additionalProperties": false,
+      "properties": {
+        "segment_id": {"type": ["string", "null"], "minLength": 1},
+        "join": {"$ref": "ux-reader-return.v1.schema.json#/$defs/join"},
+        "reason": {"type": "string", "minLength": 1},
+        "completion_sources": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true}
+      }
+    },
+    "withheld": {
+      "type": "object",
+      "required": ["claim_id", "join", "reason_codes"],
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {"type": "string", "minLength": 1},
+        "join": {"anyOf": [{"$ref": "ux-reader-return.v1.schema.json#/$defs/join"}, {"type": "null"}]},
+        "reason_codes": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true}
+      }
+    }
+  }
+}

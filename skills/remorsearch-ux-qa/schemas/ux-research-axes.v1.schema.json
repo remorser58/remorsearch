@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ux-research-axes.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "axes",
+    "segments",
+    "question_gaps"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ux-research-axes.v1"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "axes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "axis_id",
+          "audience_questions",
+          "excluded",
+          "reason",
+          "assignments"
+        ],
+        "properties": {
+          "axis_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "audience_questions": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "segments",
+                "weight",
+                "priority",
+                "devices_and_grips",
+                "abilities_and_conditions",
+                "contexts_of_use",
+                "key_tasks",
+                "pain_points"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "excluded": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "assignments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "assignment_id",
+                "reader_id",
+                "round",
+                "purpose"
+              ],
+              "properties": {
+                "assignment_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "reader_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "round": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2
+                },
+                "purpose": {
+                  "enum": [
+                    "discovery",
+                    "expansion",
+                    "counter_search"
+                  ]
+                }
+              }
+            },
+            "uniqueItems": true
+          }
+        }
+      },
+      "uniqueItems": true
+    },
+    "segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "segment_id",
+          "priority",
+          "decision_ref",
+          "summary"
+        ],
+        "properties": {
+          "segment_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "priority": {
+            "enum": [
+              "primary",
+              "secondary",
+              "edge"
+            ]
+          },
+          "decision_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "uniqueItems": true
+    },
+    "question_gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question",
+          "reason",
+          "acknowledged_by",
+          "acknowledged_at"
+        ],
+        "properties": {
+          "question": {
+            "enum": [
+              "segments",
+              "weight",
+              "priority",
+              "devices_and_grips",
+              "abilities_and_conditions",
+              "contexts_of_use",
+              "key_tasks",
+              "pain_points"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "acknowledged_by": {
+            "enum": [
+              "agent",
+              "owner"
+            ]
+          },
+          "acknowledged_at": {
+            "$ref": "ux-reader-return.v1.schema.json#/$defs/timestamp"
+          }
+        }
+      },
+      "uniqueItems": true
+    }
+  }
+}

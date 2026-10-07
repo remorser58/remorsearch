@@ -1,0 +1,276 @@
+{
+  "schema_version": "ux-reading.v1",
+  "units": "bytes (wc -c), union of full files before first search/browser action",
+  "limits": {
+    "skill_target_min": 6000,
+    "skill_target_max": 8192,
+    "skill_ceiling": 12000,
+    "base": 42000,
+    "korean": 52000,
+    "lookup_output": 8192
+  },
+  "card_limits": {
+    "references/shared/access-card.md": 9216,
+    "references/shared/evidence-card.md": 6144,
+    "references/persona-qa/kwcag-card.md": 5120,
+    "references/research/korea/overview.md": 10240,
+    "references/research/workflow.md": 12288,
+    "references/persona-qa/workflow.md": 14336,
+    "references/ergonomics/workflow.md": 12288,
+    "references/loop/workflow.md": 6144,
+    "references/loop/product-improvement.md": 9216
+  },
+  "research_commands": [
+    "start",
+    "read",
+    "ingest",
+    "robots",
+    "author-key",
+    "merge",
+    "gate",
+    "report-check",
+    "export-audience",
+    "minimize",
+    "close",
+    "plan",
+    "persona-starter",
+    "export-personas",
+    "persona-intake"
+  ],
+  "korean_switches": {
+    "report_language": {
+      "files": [],
+      "modes": [
+        "research",
+        "persona-qa",
+        "ergonomics",
+        "loop"
+      ]
+    },
+    "research_channels_or_users": {
+      "files": [
+        "references/research/korea/overview.md"
+      ],
+      "modes": [
+        "research",
+        "persona-qa",
+        "ergonomics",
+        "loop"
+      ],
+      "condition": "Research is requested/active; wording alone never enables this switch."
+    },
+    "product_under_qa": {
+      "files": [
+        "references/persona-qa/kwcag-card.md"
+      ],
+      "modes": [
+        "persona-qa",
+        "ergonomics",
+        "loop"
+      ],
+      "condition": "Korean product QA is active; pure research defers this card to its QA phase."
+    }
+  },
+  "modes": {
+    "research": {
+      "before_first_action": [
+        "SKILL.md",
+        "references/research/workflow.md",
+        "references/shared/access-card.md",
+        "references/shared/evidence-card.md"
+      ],
+      "before_external_page": [],
+      "lookup_only": [
+        "references/research/public-page-access.md",
+        "references/research/source-grading.md",
+        "references/research/audience-pipeline.md",
+        "references/research/evidence-classification.md",
+        "references/research/evidence-bundle-contract.md",
+        "references/persona-qa/evidence-bundle-contract.md",
+        "references/persona-qa/kwcag-2.2.md",
+        "references/research/korea/platform-map.md",
+        "references/research/korea/legal-checklist.md",
+        "references/research/korea/statistics.md",
+        "references/research/korea/query-craft.md",
+        "references/research/korea/promotion.md",
+        "references/research/output-template.md",
+        "references/research/korea/report-template.md",
+        "references/persona-qa/qa-report-template.md",
+        "references/ergonomics/report-template.md",
+        "references/ergonomics/human-factors-checks.md",
+        "references/loop/provider-contract.md",
+        "references/loop/cli.md",
+        "references/agent-setup.md",
+        "drivers/web/README.md",
+        "references/ergonomics/visual-science.md"
+      ],
+      "later_conditions": {
+        "causal_analysis": [
+          "references/shared/causal-chain.md"
+        ],
+        "grading_community_evidence": [],
+        "active_provider_mode": "Enter that mode as a separate phase; only its card is loaded then.",
+        "subagents": "Authorized only; setup looked up by section before spawning, not a default prerequisite."
+      }
+    },
+    "persona-qa": {
+      "before_first_action": [
+        "SKILL.md",
+        "references/persona-qa/workflow.md"
+      ],
+      "before_external_page": [
+        "references/shared/access-card.md"
+      ],
+      "lookup_only": [
+        "references/research/public-page-access.md",
+        "references/research/source-grading.md",
+        "references/research/audience-pipeline.md",
+        "references/research/evidence-classification.md",
+        "references/research/evidence-bundle-contract.md",
+        "references/persona-qa/evidence-bundle-contract.md",
+        "references/persona-qa/kwcag-2.2.md",
+        "references/research/korea/platform-map.md",
+        "references/research/korea/legal-checklist.md",
+        "references/research/korea/statistics.md",
+        "references/research/korea/query-craft.md",
+        "references/research/korea/promotion.md",
+        "references/research/output-template.md",
+        "references/research/korea/report-template.md",
+        "references/persona-qa/qa-report-template.md",
+        "references/ergonomics/report-template.md",
+        "references/ergonomics/human-factors-checks.md",
+        "references/loop/provider-contract.md",
+        "references/loop/cli.md",
+        "references/agent-setup.md",
+        "drivers/web/README.md",
+        "references/ergonomics/visual-science.md"
+      ],
+      "later_conditions": {
+        "causal_analysis": [
+          "references/shared/causal-chain.md"
+        ],
+        "grading_community_evidence": [
+          "references/shared/evidence-card.md"
+        ],
+        "active_provider_mode": "Enter that mode as a separate phase; only its card is loaded then.",
+        "subagents": "Authorized only; setup looked up by section before spawning, not a default prerequisite."
+      }
+    },
+    "ergonomics": {
+      "before_first_action": [
+        "SKILL.md",
+        "references/ergonomics/workflow.md"
+      ],
+      "before_external_page": [
+        "references/shared/access-card.md"
+      ],
+      "lookup_only": [
+        "references/research/public-page-access.md",
+        "references/research/source-grading.md",
+        "references/research/audience-pipeline.md",
+        "references/research/evidence-classification.md",
+        "references/research/evidence-bundle-contract.md",
+        "references/persona-qa/evidence-bundle-contract.md",
+        "references/persona-qa/kwcag-2.2.md",
+        "references/research/korea/platform-map.md",
+        "references/research/korea/legal-checklist.md",
+        "references/research/korea/statistics.md",
+        "references/research/korea/query-craft.md",
+        "references/research/korea/promotion.md",
+        "references/research/output-template.md",
+        "references/research/korea/report-template.md",
+        "references/persona-qa/qa-report-template.md",
+        "references/ergonomics/report-template.md",
+        "references/ergonomics/human-factors-checks.md",
+        "references/loop/provider-contract.md",
+        "references/loop/cli.md",
+        "references/agent-setup.md",
+        "drivers/web/README.md",
+        "references/ergonomics/visual-science.md"
+      ],
+      "later_conditions": {
+        "causal_analysis": [
+          "references/shared/causal-chain.md"
+        ],
+        "grading_community_evidence": [
+          "references/shared/evidence-card.md"
+        ],
+        "active_provider_mode": "Enter that mode as a separate phase; only its card is loaded then.",
+        "subagents": "Authorized only; setup looked up by section before spawning, not a default prerequisite."
+      }
+    },
+    "loop": {
+      "before_first_action": [
+        "SKILL.md",
+        "references/loop/workflow.md"
+      ],
+      "before_external_page": [
+        "references/shared/access-card.md"
+      ],
+      "lookup_only": [
+        "references/research/public-page-access.md",
+        "references/research/source-grading.md",
+        "references/research/audience-pipeline.md",
+        "references/research/evidence-classification.md",
+        "references/research/evidence-bundle-contract.md",
+        "references/persona-qa/evidence-bundle-contract.md",
+        "references/persona-qa/kwcag-2.2.md",
+        "references/research/korea/platform-map.md",
+        "references/research/korea/legal-checklist.md",
+        "references/research/korea/statistics.md",
+        "references/research/korea/query-craft.md",
+        "references/research/korea/promotion.md",
+        "references/research/output-template.md",
+        "references/research/korea/report-template.md",
+        "references/persona-qa/qa-report-template.md",
+        "references/ergonomics/report-template.md",
+        "references/ergonomics/human-factors-checks.md",
+        "references/loop/provider-contract.md",
+        "references/loop/cli.md",
+        "references/agent-setup.md",
+        "drivers/web/README.md",
+        "references/ergonomics/visual-science.md"
+      ],
+      "later_conditions": {
+        "causal_analysis": [
+          "references/shared/causal-chain.md"
+        ],
+        "grading_community_evidence": [
+          "references/shared/evidence-card.md"
+        ],
+        "active_provider_mode": "Enter that mode as a separate phase; only its card is loaded then.",
+        "subagents": "Authorized only; setup looked up by section before spawning, not a default prerequisite."
+      },
+      "first_provider_variants": {
+        "research": {
+          "files": [
+            "references/research/workflow.md",
+            "references/shared/access-card.md",
+            "references/shared/evidence-card.md"
+          ],
+          "defer_switches": [
+            "product_under_qa"
+          ],
+          "reason": "Research is first; KWCAG loads when the later product-QA phase begins."
+        },
+        "persona-qa": {
+          "files": [
+            "references/persona-qa/workflow.md"
+          ],
+          "defer_switches": [],
+          "reason": "QA provider is first; external access card is counted if its earliest page is external."
+        },
+        "product-improvement": {
+          "files": [
+            "references/loop/product-improvement.md",
+            "references/persona-qa/workflow.md"
+          ],
+          "defer_switches": [
+            "research_channels_or_users"
+          ],
+          "reason": "Whole-product improvement begins with product/intent discovery and baseline QA; research cards and channel guidance load only when research begins."
+        }
+      }
+    }
+  }
+}

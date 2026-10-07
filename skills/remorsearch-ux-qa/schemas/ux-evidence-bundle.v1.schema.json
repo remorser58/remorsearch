@@ -1,0 +1,1924 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/remorser58/Remorsearch_UX_QA_Skill/schemas/ux-evidence-bundle.v1.schema.json",
+  "title": "UX Evidence Bundle v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "bundle_id",
+    "permissions",
+    "records"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ux-evidence-bundle.v1"
+    },
+    "bundle_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "permissions": {
+      "type": "object",
+      "required": [
+        "requested",
+        "granted",
+        "blocked"
+      ],
+      "properties": {
+        "requested": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/capability"
+          },
+          "uniqueItems": true
+        },
+        "granted": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/capability"
+          },
+          "uniqueItems": true
+        },
+        "blocked": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "capability",
+              "reason"
+            ],
+            "properties": {
+              "capability": {
+                "$ref": "#/$defs/capability"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "records": {
+      "type": "object",
+      "required": [
+        "sources",
+        "evidence",
+        "claims",
+        "personas",
+        "scenarios",
+        "runs",
+        "observations",
+        "findings",
+        "proposals",
+        "figma"
+      ],
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/source"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/claim"
+          }
+        },
+        "personas": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/persona"
+          }
+        },
+        "scenarios": {
+          "$ref": "#/$defs/records"
+        },
+        "runs": {
+          "$ref": "#/$defs/records"
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/observation"
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/finding"
+          }
+        },
+        "proposals": {
+          "$ref": "#/$defs/records"
+        },
+        "figma": {
+          "$ref": "#/$defs/records"
+        }
+      }
+    },
+    "research": {
+      "$ref": "#/$defs/research"
+    },
+    "minimized_from": {
+      "type": "object",
+      "required": [
+        "bundle_id",
+        "bundle_input_sha256",
+        "gate_input_sha256",
+        "rules_version",
+        "sanitizer_version",
+        "mode"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "bundle_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bundle_input_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "gate_input_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "rules_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sanitizer_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mode": {
+          "enum": [
+            "live",
+            "fixture"
+          ]
+        }
+      }
+    }
+  },
+  "$defs": {
+    "capability": {
+      "enum": [
+        "read_only",
+        "design_write",
+        "test_data_write",
+        "code_write"
+      ]
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claim_kind": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/claimKind"
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "epistemic_status": {
+          "enum": [
+            "observed",
+            "inferred",
+            "unknown"
+          ]
+        },
+        "verification_status": {
+          "enum": [
+            "verified",
+            "unverified",
+            "proposed"
+          ]
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "observation_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "counter_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "context_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "research_support_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "research_context_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "persona_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "subject": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/subject"
+        },
+        "scope": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/scope"
+        },
+        "about_current_version": {
+          "type": "boolean"
+        },
+        "stakes": {
+          "enum": [
+            "normal",
+            "high"
+          ]
+        },
+        "scenario_priorities": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "P0",
+              "P1",
+              "P2",
+              "P3"
+            ]
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "audience_values": {
+          "type": "array",
+          "items": {
+            "$ref": "ux-reader-return.v1.schema.json#/$defs/audienceValue"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "counter_search": {
+          "anyOf": [
+            {
+              "$ref": "ux-reader-return.v1.schema.json#/$defs/counterSearch"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "research_epistemic_status": {
+          "enum": [
+            "observed",
+            "inferred",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "researchClaim": {
+      "type": "object",
+      "required": [
+        "id",
+        "claim_kind",
+        "statement",
+        "epistemic_status",
+        "verification_status",
+        "evidence_ids",
+        "observation_ids",
+        "counter_evidence_ids",
+        "context_evidence_ids",
+        "research_support_evidence_ids",
+        "research_context_evidence_ids",
+        "subject",
+        "scope",
+        "about_current_version",
+        "stakes",
+        "scenario_priorities",
+        "audience_values",
+        "counter_search",
+        "research_epistemic_status"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claim_kind": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/claimKind"
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "epistemic_status": {
+          "enum": [
+            "observed",
+            "inferred",
+            "unknown"
+          ]
+        },
+        "verification_status": {
+          "enum": [
+            "verified",
+            "unverified",
+            "proposed"
+          ]
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "observation_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "counter_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "context_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "research_support_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "research_context_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "persona_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "subject": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/subject"
+        },
+        "scope": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/scope"
+        },
+        "about_current_version": {
+          "type": "boolean"
+        },
+        "stakes": {
+          "enum": [
+            "normal",
+            "high"
+          ]
+        },
+        "scenario_priorities": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "P0",
+              "P1",
+              "P2",
+              "P3"
+            ]
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "audience_values": {
+          "type": "array",
+          "items": {
+            "$ref": "ux-reader-return.v1.schema.json#/$defs/audienceValue"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "counter_search": {
+          "anyOf": [
+            {
+              "$ref": "ux-reader-return.v1.schema.json#/$defs/counterSearch"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "research_epistemic_status": {
+          "enum": [
+            "observed",
+            "inferred",
+            "unknown"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "verification_status": {
+                "const": "verified"
+              },
+              "claim_kind": {
+                "const": "product_behavior"
+              }
+            },
+            "required": [
+              "verification_status",
+              "claim_kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "observation_ids": {
+                "minItems": 1
+              },
+              "epistemic_status": {
+                "const": "observed"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "verification_status": {
+                "const": "verified"
+              },
+              "claim_kind": {
+                "not": {
+                  "const": "product_behavior"
+                }
+              }
+            },
+            "required": [
+              "verification_status",
+              "claim_kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence_ids": {
+                "minItems": 1
+              },
+              "epistemic_status": {
+                "const": "observed"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "channel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "access_basis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "access_method": {
+          "type": "string",
+          "minLength": 1
+        },
+        "public_scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retention_status": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_type": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/sourceType"
+        },
+        "source_family": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/sourceFamily"
+        },
+        "platform_family": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/channelFamily"
+        },
+        "access": {
+          "anyOf": [
+            {
+              "$ref": "ux-reader-return.v1.schema.json#/$defs/access"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "provenance": {
+          "oneOf": [
+            {
+              "$ref": "ux-reader-return.v1.schema.json#/$defs/readerProvenance"
+            },
+            {
+              "$ref": "ux-reader-return.v1.schema.json#/$defs/importProvenance"
+            }
+          ]
+        },
+        "flags": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/flags"
+        },
+        "retention_until": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "research_tombstone": {
+          "$ref": "#/$defs/tombstone"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "research_tombstone"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/sourceTombstone"
+          }
+        },
+        {
+          "if": {
+            "anyOf": [
+              {
+                "required": [
+                  "provenance"
+                ]
+              },
+              {
+                "required": [
+                  "access"
+                ]
+              }
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/researchSource"
+          }
+        }
+      ]
+    },
+    "tombstone": {
+      "type": "object",
+      "required": [
+        "reason",
+        "removed_at",
+        "prior_access_basis"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "enum": [
+            "expired",
+            "deleted",
+            "withdrawn",
+            "policy_revoked"
+          ]
+        },
+        "removed_at": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/timestamp"
+        },
+        "prior_access_basis": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "sourceTombstone": {
+      "type": "object",
+      "required": [
+        "id",
+        "channel",
+        "source_ref",
+        "access_basis",
+        "access_method",
+        "public_scope",
+        "retention_status",
+        "research_tombstone"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "channel": {
+          "enum": [
+            "expired",
+            "redacted"
+          ]
+        },
+        "source_ref": {
+          "type": "string",
+          "pattern": "^(expired|redacted)://[^/]+$"
+        },
+        "access_basis": {
+          "const": "redacted"
+        },
+        "access_method": {
+          "enum": [
+            "retention_purge",
+            "content_purge"
+          ]
+        },
+        "public_scope": {
+          "const": "none"
+        },
+        "retention_status": {
+          "enum": [
+            "deleted",
+            "withdrawn"
+          ]
+        },
+        "research_tombstone": {
+          "$ref": "#/$defs/tombstone"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "research_tombstone": {
+                "properties": {
+                  "reason": {
+                    "const": "expired"
+                  }
+                },
+                "required": [
+                  "reason"
+                ]
+              }
+            },
+            "required": [
+              "research_tombstone"
+            ]
+          },
+          "then": {
+            "properties": {
+              "channel": {
+                "const": "expired"
+              },
+              "source_ref": {
+                "pattern": "^expired://"
+              },
+              "access_method": {
+                "const": "retention_purge"
+              },
+              "retention_status": {
+                "const": "deleted"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "channel": {
+                "const": "redacted"
+              },
+              "source_ref": {
+                "pattern": "^redacted://"
+              },
+              "access_method": {
+                "const": "content_purge"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "research_tombstone": {
+                "properties": {
+                  "reason": {
+                    "const": "withdrawn"
+                  }
+                },
+                "required": [
+                  "reason"
+                ]
+              }
+            },
+            "required": [
+              "research_tombstone"
+            ]
+          },
+          "then": {
+            "properties": {
+              "retention_status": {
+                "const": "withdrawn"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "retention_status": {
+                "const": "deleted"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "researchSource": {
+      "type": "object",
+      "required": [
+        "title",
+        "item_key",
+        "source_type",
+        "source_family",
+        "platform_family",
+        "org",
+        "author_key",
+        "thread_key",
+        "published_at",
+        "observed_at",
+        "valid_at",
+        "version",
+        "access_method",
+        "access_basis",
+        "public_scope",
+        "retention_status",
+        "retention_until",
+        "privacy_class",
+        "promo_check",
+        "flags",
+        "provenance",
+        "access",
+        "id",
+        "channel",
+        "source_ref",
+        "producer_stake"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "item_key": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "source_type": {
+          "enum": [
+            "product_analytics",
+            "survey",
+            "interview",
+            "usability_test",
+            "support_tickets",
+            "official_statistics",
+            "research_paper",
+            "market_report",
+            "competitor",
+            "official_docs",
+            "product_brief",
+            "community",
+            "app_store_reviews",
+            "news",
+            "expert_judgment",
+            "llm_output",
+            "synthetic"
+          ]
+        },
+        "source_family": {
+          "enum": [
+            "measured",
+            "statistical",
+            "estimate",
+            "intent",
+            "voice",
+            "secondary",
+            "expert_judgment",
+            "none"
+          ]
+        },
+        "platform_family": {
+          "enum": [
+            "app_store_reviews",
+            "blog",
+            "commerce_reviews",
+            "community",
+            "competitor",
+            "expert_judgment",
+            "interview",
+            "llm_output",
+            "market_report",
+            "microblog",
+            "news",
+            "official_docs",
+            "official_statistics",
+            "product_analytics",
+            "product_brief",
+            "qna",
+            "research_paper",
+            "support_tickets",
+            "survey",
+            "synthetic",
+            "usability_test",
+            "video"
+          ]
+        },
+        "org": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "author_key": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{16}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "thread_key": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{16}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+        },
+        "valid_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "version": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "access_method": {
+          "type": "string",
+          "minLength": 1
+        },
+        "access_basis": {
+          "enum": [
+            "public_anonymous",
+            "public_teaser",
+            "official_api",
+            "team_provided",
+            "authorised_member",
+            "fixture"
+          ]
+        },
+        "public_scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retention_status": {
+          "enum": [
+            "retained",
+            "withdrawn",
+            "deleted",
+            "redacted"
+          ]
+        },
+        "retention_until": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "privacy_class": {
+          "enum": [
+            "ordinary",
+            "aggregate",
+            "protected_individual"
+          ]
+        },
+        "promo_check": {
+          "enum": [
+            "text_only",
+            "text_and_images"
+          ]
+        },
+        "flags": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/flags"
+        },
+        "provenance": {
+          "oneOf": [
+            {
+              "$ref": "ux-reader-return.v1.schema.json#/$defs/readerProvenance"
+            },
+            {
+              "$ref": "ux-reader-return.v1.schema.json#/$defs/importProvenance"
+            }
+          ]
+        },
+        "access": {
+          "anyOf": [
+            {
+              "$ref": "ux-reader-return.v1.schema.json#/$defs/access"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stat_card": {
+          "anyOf": [
+            {
+              "$ref": "ux-reader-return.v1.schema.json#/$defs/statCard"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "channel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "captures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "capture_ref",
+              "content_sha256",
+              "metadata"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "capture_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "content_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "metadata": {
+                "type": "object"
+              }
+            }
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "producer_stake": {
+          "enum": [
+            "official",
+            "independent",
+            "vendor"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "identity_status": {
+          "enum": [
+            "attested",
+            "unknown"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "source_type": {
+                "enum": [
+                  "product_analytics",
+                  "interview",
+                  "usability_test",
+                  "support_tickets"
+                ]
+              }
+            },
+            "required": [
+              "source_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "source_family": {
+                "const": "measured"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source_type": {
+                "enum": [
+                  "official_statistics",
+                  "research_paper"
+                ]
+              }
+            },
+            "required": [
+              "source_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "source_family": {
+                "const": "statistical"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source_type": {
+                "enum": [
+                  "market_report",
+                  "competitor"
+                ]
+              }
+            },
+            "required": [
+              "source_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "source_family": {
+                "const": "estimate"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source_type": {
+                "enum": [
+                  "official_docs",
+                  "product_brief"
+                ]
+              }
+            },
+            "required": [
+              "source_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "source_family": {
+                "const": "intent"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source_type": {
+                "enum": [
+                  "community",
+                  "app_store_reviews"
+                ]
+              }
+            },
+            "required": [
+              "source_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "source_family": {
+                "const": "voice"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source_type": {
+                "enum": [
+                  "news"
+                ]
+              }
+            },
+            "required": [
+              "source_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "source_family": {
+                "const": "secondary"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source_type": {
+                "enum": [
+                  "expert_judgment"
+                ]
+              }
+            },
+            "required": [
+              "source_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "source_family": {
+                "const": "expert_judgment"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source_type": {
+                "enum": [
+                  "llm_output",
+                  "synthetic"
+                ]
+              }
+            },
+            "required": [
+              "source_type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "source_family": {
+                "const": "none"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "access_basis": {
+                "const": "official_api"
+              }
+            },
+            "required": [
+              "access_basis"
+            ]
+          },
+          "then": {
+            "properties": {
+              "retention_until": {
+                "$ref": "ux-reader-return.v1.schema.json#/$defs/timestamp"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "provenance": {
+                "properties": {
+                  "kind": {
+                    "const": "import"
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              }
+            },
+            "required": [
+              "provenance"
+            ]
+          },
+          "then": {
+            "properties": {
+              "access_basis": {
+                "const": "team_provided"
+              },
+              "access_method": {
+                "const": "team_export"
+              },
+              "access": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "access": {
+                "$ref": "ux-reader-return.v1.schema.json#/$defs/access"
+              },
+              "access_basis": {
+                "enum": [
+                  "public_anonymous",
+                  "public_teaser",
+                  "official_api",
+                  "authorised_member",
+                  "fixture"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "privacy_class": {
+                "const": "aggregate"
+              }
+            },
+            "required": [
+              "privacy_class"
+            ]
+          },
+          "then": {
+            "properties": {
+              "author_key": {
+                "type": "null"
+              },
+              "thread_key": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source_type": {
+                "const": "survey"
+              }
+            },
+            "required": [
+              "source_type"
+            ]
+          },
+          "then": {
+            "if": {
+              "properties": {
+                "producer_stake": {
+                  "const": "vendor"
+                }
+              },
+              "required": [
+                "producer_stake"
+              ]
+            },
+            "then": {
+              "properties": {
+                "source_family": {
+                  "const": "estimate"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "source_family": {
+                  "const": "measured"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_type": {
+          "enum": [
+            "firsthand",
+            "quantitative",
+            "statistic",
+            "official",
+            "inference"
+          ]
+        },
+        "epistemic_status": {
+          "enum": [
+            "observed",
+            "inferred",
+            "unknown"
+          ]
+        },
+        "excerpt": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capture_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "flags": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/flags"
+        },
+        "scope": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/scope"
+        },
+        "denominator": {
+          "anyOf": [
+            {
+              "$ref": "ux-reader-return.v1.schema.json#/$defs/denominator"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cues": {
+          "type": "object"
+        },
+        "copypaste_group": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "approved_values": {
+          "type": "array",
+          "items": {
+            "$ref": "ux-reader-return.v1.schema.json#/$defs/productValue"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "research": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "run_id",
+        "manifest",
+        "query_log_sha256",
+        "expansion_log_sha256",
+        "merge_receipt_sha256",
+        "rules_version",
+        "verifier_decisions",
+        "scope_resolutions",
+        "gaps"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "research-engine-2026-10-01.1"
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "manifest": {
+          "type": "object"
+        },
+        "query_log_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "expansion_log_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "merge_receipt_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "rules_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verifier_decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "ux-reader-return.v1.schema.json#/$defs/verifierDecision"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "scope_resolutions": {
+          "type": "array",
+          "items": {
+            "$ref": "ux-reader-return.v1.schema.json#/$defs/scopeResolution"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "code"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "summary_attestations": {
+          "type": "array",
+          "items": {
+            "$ref": "ux-reader-return.v1.schema.json#/$defs/summaryAttestation"
+          }
+        }
+      }
+    },
+    "persona": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "basis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "audience_ref": {
+          "type": "object",
+          "required": [
+            "audience_id",
+            "segment_id",
+            "facet",
+            "claim_ids"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "audience_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "segment_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "facet": {
+              "type": "string",
+              "minLength": 1
+            },
+            "claim_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 0,
+              "uniqueItems": true
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "audience_ref"
+            ]
+          },
+          "then": {
+            "properties": {
+              "basis": {
+                "const": "synthetic"
+              }
+            },
+            "required": [
+              "basis"
+            ]
+          }
+        }
+      ]
+    },
+    "finding": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "segments_affected": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "second_pass": {
+          "$ref": "#/$defs/secondPass"
+        }
+      }
+    },
+    "captureReceipt": {
+      "type": "object",
+      "required": [
+        "artifact_path",
+        "sha256",
+        "captured_at",
+        "surface_url",
+        "build_id",
+        "device",
+        "quoted_ui_text"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "artifact_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "surface_url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "build_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "device": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quoted_ui_text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "captured_at": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/timestamp"
+        }
+      }
+    },
+    "secondPass": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewer",
+        "task_completed",
+        "control_name",
+        "omitted",
+        "severity",
+        "inconclusive"
+      ],
+      "properties": {
+        "reviewer": {
+          "enum": [
+            "subagent",
+            "self"
+          ]
+        },
+        "task_completed": {
+          "type": "boolean"
+        },
+        "control_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "omitted": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "severity": {
+          "enum": [
+            "agree",
+            "disagree"
+          ]
+        },
+        "inconclusive": {
+          "type": "boolean"
+        },
+        "resolution": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "finding_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "severity": {
+                "const": "disagree"
+              }
+            },
+            "required": [
+              "severity"
+            ]
+          },
+          "then": {
+            "required": [
+              "resolution"
+            ],
+            "properties": {
+              "resolution": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_path",
+        "sha256",
+        "captured_at",
+        "surface_url",
+        "build_id",
+        "device",
+        "quoted_ui_text"
+      ],
+      "properties": {
+        "artifact_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/sha256"
+        },
+        "captured_at": {
+          "$ref": "ux-reader-return.v1.schema.json#/$defs/timestamp"
+        },
+        "surface_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "build_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "device": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quoted_ui_text": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "receipt": {
+          "$ref": "#/$defs/receipt"
+        },
+        "product_values": {
+          "type": "array",
+          "items": {
+            "$ref": "ux-reader-return.v1.schema.json#/$defs/productValue"
+          },
+          "uniqueItems": true
+        }
+      }
+    }
+  },
+  "description": "Legacy-compatible graph shape with typed research inputs. Semantic validator owns links/observations/retention; research consumers also require an authoritative fresh gate.",
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "research"
+        ]
+      },
+      "then": {
+        "properties": {
+          "records": {
+            "properties": {
+              "claims": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/researchClaim"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

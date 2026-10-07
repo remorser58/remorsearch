@@ -1,0 +1,1200 @@
+{
+  "type": "object",
+  "required": [
+    "schema_version",
+    "mode",
+    "goal",
+    "policy",
+    "bundle",
+    "scenarios",
+    "artifacts",
+    "browser_runs",
+    "visual_checks",
+    "fixes",
+    "rounds",
+    "replays"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ux-loop.v1"
+    },
+    "mode": {
+      "enum": [
+        "live",
+        "fixture"
+      ]
+    },
+    "goal": {
+      "type": "object",
+      "required": [
+        "id",
+        "objective",
+        "scenario_ids",
+        "evidence_ids",
+        "max_iterations",
+        "code_paths",
+        "stop_conditions"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "objective": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "scenario_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+          },
+          "minItems": 1,
+          "maxItems": 500,
+          "uniqueItems": true
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+          },
+          "minItems": 1,
+          "maxItems": 500,
+          "uniqueItems": true
+        },
+        "max_iterations": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "code_paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "minItems": 1,
+          "maxItems": 500,
+          "uniqueItems": true
+        },
+        "stop_conditions": {
+          "type": "object",
+          "required": [
+            "all_scenarios_pass",
+            "all_findings_replayed",
+            "visual_pass",
+            "accessibility_pass",
+            "regression_pass",
+            "no_unknowns"
+          ],
+          "properties": {
+            "all_scenarios_pass": {
+              "const": true
+            },
+            "all_findings_replayed": {
+              "const": true
+            },
+            "visual_pass": {
+              "const": true
+            },
+            "accessibility_pass": {
+              "const": true
+            },
+            "regression_pass": {
+              "const": true
+            },
+            "no_unknowns": {
+              "const": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "product_context_artifact_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "figma_first",
+        "allow_side_accents",
+        "raw_community_storage",
+        "retention_days"
+      ],
+      "properties": {
+        "figma_first": {
+          "const": true
+        },
+        "allow_side_accents": {
+          "const": false
+        },
+        "raw_community_storage": {
+          "const": false
+        },
+        "retention_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "bundle": {
+      "type": "object"
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/scenario"
+      },
+      "minItems": 1,
+      "maxItems": 500,
+      "uniqueItems": true
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifact"
+      },
+      "minItems": 0,
+      "maxItems": 500,
+      "uniqueItems": true
+    },
+    "browser_runs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/browser_run"
+      },
+      "minItems": 0,
+      "maxItems": 500,
+      "uniqueItems": true
+    },
+    "visual_checks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/visual_check"
+      },
+      "minItems": 0,
+      "maxItems": 500,
+      "uniqueItems": true
+    },
+    "fixes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/fix"
+      },
+      "minItems": 0,
+      "maxItems": 500,
+      "uniqueItems": true
+    },
+    "rounds": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/round"
+      },
+      "minItems": 0,
+      "maxItems": 500,
+      "uniqueItems": true
+    },
+    "replays": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/replay"
+      },
+      "minItems": 0,
+      "maxItems": 500,
+      "uniqueItems": true
+    }
+  },
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ux-loop:v1",
+  "title": "Bounded UX improvement loop v1",
+  "$defs": {
+    "viewport": {
+      "type": "object",
+      "required": [
+        "width",
+        "height",
+        "device_scale_factor"
+      ],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 240,
+          "maximum": 8192
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 240,
+          "maximum": 8192
+        },
+        "device_scale_factor": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 4
+        }
+      },
+      "additionalProperties": false
+    },
+    "step": {
+      "type": "object",
+      "required": [
+        "id",
+        "action",
+        "expected",
+        "requires"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "expected": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "requires": {
+          "enum": [
+            "read_only",
+            "design_write",
+            "test_data_write",
+            "code_write"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "scenario": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "origin",
+        "route",
+        "viewport",
+        "device",
+        "input_method",
+        "fixture",
+        "steps",
+        "a11y_checks"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "origin": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "route": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "viewport": {
+          "$ref": "#/$defs/viewport"
+        },
+        "device": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "input_method": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "fixture": {
+          "type": "object",
+          "required": [
+            "id",
+            "revision",
+            "account_ref",
+            "isolated"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+            },
+            "revision": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            "account_ref": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            "isolated": {
+              "const": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/step"
+          },
+          "minItems": 1,
+          "maxItems": 500,
+          "uniqueItems": true
+        },
+        "a11y_checks": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "keyboard",
+              "focus",
+              "semantics",
+              "contrast",
+              "screen_reader"
+            ]
+          },
+          "minItems": 3,
+          "maxItems": 500,
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "object",
+      "required": [
+        "id",
+        "path",
+        "sha256",
+        "kind",
+        "provenance",
+        "created_at"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "kind": {
+          "enum": [
+            "screenshot",
+            "figma_readback",
+            "console",
+            "network",
+            "runtime",
+            "steps",
+            "accessibility",
+            "visual_report",
+            "regression",
+            "code_patch",
+            "product_context",
+            "intent_review"
+          ]
+        },
+        "provenance": {
+          "enum": [
+            "live",
+            "fixture"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
+      },
+      "additionalProperties": false
+    },
+    "step_result": {
+      "type": "object",
+      "required": [
+        "step_id",
+        "outcome",
+        "actual",
+        "artifact_ids"
+      ],
+      "properties": {
+        "step_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "outcome": {
+          "enum": [
+            "passed",
+            "failed",
+            "blocked",
+            "unknown"
+          ]
+        },
+        "actual": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "artifact_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+          },
+          "minItems": 1,
+          "maxItems": 500,
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "a11y_result": {
+      "type": "object",
+      "required": [
+        "name",
+        "status",
+        "detail",
+        "artifact_id"
+      ],
+      "properties": {
+        "name": {
+          "enum": [
+            "keyboard",
+            "focus",
+            "semantics",
+            "contrast",
+            "screen_reader"
+          ]
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "blocked",
+            "unknown"
+          ]
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "artifact_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "environment": {
+      "type": "object",
+      "required": [
+        "origin",
+        "route",
+        "viewport",
+        "device",
+        "fixture_id",
+        "fixture_revision",
+        "account_ref",
+        "session_id"
+      ],
+      "properties": {
+        "origin": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "route": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "viewport": {
+          "$ref": "#/$defs/viewport"
+        },
+        "device": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "fixture_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "fixture_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "account_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "browser_run": {
+      "type": "object",
+      "required": [
+        "id",
+        "scenario_id",
+        "scenario_digest",
+        "phase",
+        "outcome",
+        "epistemic_status",
+        "execution",
+        "operator",
+        "tool",
+        "code_revision",
+        "started_at",
+        "ended_at",
+        "environment",
+        "steps",
+        "accessibility",
+        "evidence",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "scenario_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "scenario_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "phase": {
+          "enum": [
+            "baseline",
+            "replay"
+          ]
+        },
+        "outcome": {
+          "enum": [
+            "passed",
+            "failed",
+            "blocked",
+            "unknown"
+          ]
+        },
+        "epistemic_status": {
+          "enum": [
+            "observed",
+            "inferred",
+            "unknown"
+          ]
+        },
+        "execution": {
+          "enum": [
+            "live",
+            "fixture"
+          ]
+        },
+        "operator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "tool": {
+          "type": "object",
+          "required": [
+            "name",
+            "version"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            "browser": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            "browser_version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            },
+            "platform": {
+              "enum": [
+                "web",
+                "ios",
+                "android"
+              ]
+            },
+            "os_version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "application_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            }
+          },
+          "additionalProperties": false
+        },
+        "code_revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "started_at": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "ended_at": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "environment": {
+          "$ref": "#/$defs/environment"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/step_result"
+          },
+          "minItems": 0,
+          "maxItems": 500,
+          "uniqueItems": true
+        },
+        "accessibility": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/a11y_result"
+          },
+          "minItems": 0,
+          "maxItems": 500,
+          "uniqueItems": true
+        },
+        "evidence": {
+          "type": "object",
+          "required": [
+            "console",
+            "network",
+            "runtime"
+          ],
+          "properties": {
+            "console": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "network": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "runtime": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "reason": {
+          "type": "string",
+          "maxLength": 2000
+        }
+      },
+      "additionalProperties": false
+    },
+    "visual_check": {
+      "type": "object",
+      "required": [
+        "id",
+        "run_id",
+        "figma_id",
+        "node_ids",
+        "file_key",
+        "branch_key",
+        "baseline_version",
+        "readback_version",
+        "route",
+        "viewport",
+        "actual_artifact_id",
+        "reference_artifact_id",
+        "comparison_artifact_id",
+        "status",
+        "method",
+        "reviewer",
+        "checks",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "run_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "figma_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "node_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+          },
+          "minItems": 1,
+          "maxItems": 500,
+          "uniqueItems": true
+        },
+        "file_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "branch_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "baseline_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "readback_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "route": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "viewport": {
+          "$ref": "#/$defs/viewport"
+        },
+        "actual_artifact_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reference_artifact_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "comparison_artifact_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "blocked",
+            "unknown"
+          ]
+        },
+        "method": {
+          "enum": [
+            "review",
+            "pixel_diff"
+          ]
+        },
+        "reviewer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "checks": {
+          "type": "object",
+          "required": [
+            "layout",
+            "interaction_states",
+            "typography",
+            "side_accents"
+          ],
+          "properties": {
+            "layout": {
+              "enum": [
+                "passed",
+                "failed",
+                "blocked",
+                "unknown"
+              ]
+            },
+            "interaction_states": {
+              "enum": [
+                "passed",
+                "failed",
+                "blocked",
+                "unknown"
+              ]
+            },
+            "typography": {
+              "enum": [
+                "passed",
+                "failed",
+                "blocked",
+                "unknown"
+              ]
+            },
+            "side_accents": {
+              "enum": [
+                "passed",
+                "failed",
+                "blocked",
+                "unknown"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "reason": {
+          "type": "string",
+          "maxLength": 2000
+        }
+      },
+      "additionalProperties": false
+    },
+    "fix": {
+      "type": "object",
+      "required": [
+        "id",
+        "proposal_id",
+        "finding_ids",
+        "kind",
+        "changed_paths",
+        "patch_artifact_id",
+        "before_revision",
+        "after_revision",
+        "figma_id",
+        "rationale",
+        "expected_effect"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "proposal_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "finding_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+          },
+          "minItems": 1,
+          "maxItems": 500,
+          "uniqueItems": true
+        },
+        "kind": {
+          "enum": [
+            "code_write",
+            "design_write",
+            "test_data_write"
+          ]
+        },
+        "changed_paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "minItems": 0,
+          "maxItems": 500,
+          "uniqueItems": true
+        },
+        "patch_artifact_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "before_revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "after_revision": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "figma_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "expected_effect": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "constraint_acknowledgements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/constraint_acknowledgement"
+          },
+          "minItems": 0,
+          "maxItems": 500,
+          "uniqueItems": true
+        },
+        "conflict_resolutions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/conflict_resolution"
+          },
+          "minItems": 0,
+          "maxItems": 500,
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "round": {
+      "type": "object",
+      "required": [
+        "id",
+        "number",
+        "baseline_run_ids",
+        "fix_ids"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "number": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "baseline_run_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+          },
+          "minItems": 0,
+          "maxItems": 500,
+          "uniqueItems": true
+        },
+        "fix_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+          },
+          "minItems": 0,
+          "maxItems": 500,
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "replay": {
+      "type": "object",
+      "required": [
+        "id",
+        "round_id",
+        "run_ids",
+        "regression"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "round_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "run_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+          },
+          "minItems": 1,
+          "maxItems": 500,
+          "uniqueItems": true
+        },
+        "intent_review_artifact_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "regression": {
+          "type": "object",
+          "required": [
+            "status",
+            "artifact_id",
+            "scenario_ids",
+            "code_revision",
+            "detail"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "passed",
+                "failed",
+                "blocked",
+                "unknown"
+              ]
+            },
+            "artifact_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "scenario_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+              },
+              "minItems": 1,
+              "maxItems": 500,
+              "uniqueItems": true
+            },
+            "code_revision": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "detail": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "constraint_acknowledgement": {
+      "type": "object",
+      "required": [
+        "constraint_id",
+        "decision",
+        "evidence"
+      ],
+      "properties": {
+        "constraint_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "decision": {
+          "enum": [
+            "preserved",
+            "authorized_change"
+          ]
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "actor": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "Optional provider attribution only; never operator authorization."
+        }
+      },
+      "additionalProperties": false
+    },
+    "conflict_resolution": {
+      "type": "object",
+      "required": [
+        "conflict_id",
+        "note"
+      ],
+      "properties": {
+        "conflict_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"
+        },
+        "actor": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "Optional provider attribution only; never operator authorization."
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

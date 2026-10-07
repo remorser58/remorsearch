@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/remorser58/Remorsearch_UX_QA_Skill/schemas/ux-research-gate.v1.schema.json",
+  "title": "UX Research Gate v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "contract_version",
+    "run_id",
+    "bundle_id",
+    "rules_version",
+    "rules_sha256",
+    "brief_sha256",
+    "merge_receipt_sha256",
+    "bundle_input_sha256",
+    "process_input_sha256",
+    "valid_until",
+    "result",
+    "exit_code",
+    "claims",
+    "status_counts",
+    "issues",
+    "warnings",
+    "mode"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "ux-research-gate.v1"},
+    "contract_version": {"const": "research-engine-2026-10-01.1"},
+    "run_id": {"anyOf": [{"type": "string", "minLength": 1}, {"type": "null"}]},
+    "bundle_id": {"anyOf": [{"type": "string", "minLength": 1}, {"type": "null"}]},
+    "rules_version": {"anyOf": [{"type": "string", "minLength": 1}, {"type": "null"}]},
+    "rules_sha256": {"anyOf": [{"type": "string", "pattern": "^[0-9a-f]{64}$"}, {"type": "null"}]},
+    "brief_sha256": {"anyOf": [{"type": "string", "pattern": "^[0-9a-f]{64}$"}, {"type": "null"}]},
+    "merge_receipt_sha256": {"anyOf": [{"type": "string", "pattern": "^[0-9a-f]{64}$"}, {"type": "null"}]},
+    "bundle_input_sha256": {"anyOf": [{"type": "string", "pattern": "^[0-9a-f]{64}$"}, {"type": "null"}]},
+    "process_input_sha256": {"anyOf": [{"type": "string", "pattern": "^[0-9a-f]{64}$"}, {"type": "null"}]},
+    "valid_until": {"anyOf": [{"$ref": "ux-reader-return.v1.schema.json#/$defs/timestamp"}, {"type": "null"}]},
+    "result": {"enum": ["pass", "fail"]},
+    "exit_code": {"enum": [0, 1, 2]},
+    "claims": {"type": "array", "items": {"$ref": "#/$defs/claimResult"}, "minItems": 0, "uniqueItems": true},
+    "status_counts": {
+      "type": "object",
+      "required": [
+        "supported_high",
+        "supported_medium",
+        "single_voice",
+        "lead_only",
+        "conflicting",
+        "needs_product_check",
+        "stale",
+        "unfit"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "supported_high": {"type": "integer", "minimum": 0},
+        "supported_medium": {"type": "integer", "minimum": 0},
+        "single_voice": {"type": "integer", "minimum": 0},
+        "lead_only": {"type": "integer", "minimum": 0},
+        "conflicting": {"type": "integer", "minimum": 0},
+        "needs_product_check": {"type": "integer", "minimum": 0},
+        "stale": {"type": "integer", "minimum": 0},
+        "unfit": {"type": "integer", "minimum": 0}
+      }
+    },
+    "issues": {"type": "array", "items": {"$ref": "#/$defs/issue"}, "minItems": 0, "uniqueItems": true},
+    "warnings": {"type": "array", "items": {"$ref": "#/$defs/issue"}, "minItems": 0, "uniqueItems": true},
+    "mode": {"anyOf": [{"enum": ["live", "fixture"]}, {"type": "null"}]}
+  },
+  "description": "Computed process/claim assessment. Consumers recompute dependency hashes and live retention; schema validity is not a gate pass.",
+  "allOf": [
+    {
+      "if": {"properties": {"result": {"const": "pass"}}, "required": ["result"]},
+      "then": {
+        "properties": {
+          "exit_code": {"const": 0},
+          "issues": {"maxItems": 0},
+          "run_id": {"type": "string", "minLength": 1},
+          "bundle_id": {"type": "string", "minLength": 1},
+          "rules_version": {"type": "string", "minLength": 1},
+          "rules_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "brief_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "merge_receipt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "bundle_input_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "process_input_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "mode": {"enum": ["live", "fixture"]}
+        }
+      },
+      "else": {"properties": {"exit_code": {"enum": [1, 2]}, "issues": {"minItems": 1}}}
+    }
+  ],
+  "$defs": {
+    "issue": {
+      "type": "object",
+      "required": ["code", "location", "reason", "next_step"],
+      "additionalProperties": false,
+      "properties": {
+        "code": {"type": "string", "minLength": 1},
+        "location": {"type": "string", "minLength": 1},
+        "reason": {"type": "string", "minLength": 1},
+        "next_step": {"type": "string", "minLength": 1}
+      }
+    },
+    "assessment": {
+      "type": "object",
+      "required": ["evidence_id", "capture_ref", "fit_grade", "final_grade", "eligible", "unit_id", "reasons"],
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {"type": "string", "minLength": 1},
+        "capture_ref": {"type": "string", "minLength": 1},
+        "fit_grade": {"enum": ["A", "B", "C", "D", "E"]},
+        "final_grade": {"enum": ["A", "B", "C", "D", "E"]},
+        "eligible": {"type": "boolean"},
+        "unit_id": {"type": ["string", "null"], "minLength": 1},
+        "reasons": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true}
+      }
+    },
+    "unit": {
+      "type": "object",
+      "required": ["unit_id", "kind", "members", "representative_evidence_id", "grade", "channel_family", "org"],
+      "additionalProperties": false,
+      "properties": {
+        "unit_id": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["person", "thread", "organisation", "copypaste", "observation"]},
+        "members": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+        "representative_evidence_id": {"type": ["string", "null"], "minLength": 1},
+        "grade": {"anyOf": [{"enum": ["A", "B", "C", "D", "E"]}, {"type": "null"}]},
+        "channel_family": {"anyOf": [{"$ref": "ux-reader-return.v1.schema.json#/$defs/channelFamily"}, {"type": "null"}]},
+        "org": {"type": ["string", "null"], "minLength": 1}
+      }
+    },
+    "claimResult": {
+      "type": "object",
+      "required": [
+        "claim_id",
+        "input_sha256",
+        "status",
+        "best_grade",
+        "grades",
+        "counting_evidence_ids",
+        "context_evidence_ids",
+        "counter_evidence_ids",
+        "observation_ids",
+        "units",
+        "channel_families",
+        "organisations",
+        "reasons",
+        "counter_search_required",
+        "confidence",
+        "share_basis",
+        "export_values"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {"type": "string", "minLength": 1},
+        "input_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "status": {
+          "enum": [
+            "supported_high",
+            "supported_medium",
+            "single_voice",
+            "lead_only",
+            "conflicting",
+            "needs_product_check",
+            "stale",
+            "unfit"
+          ]
+        },
+        "best_grade": {"anyOf": [{"enum": ["A", "B", "C", "D", "E"]}, {"type": "null"}]},
+        "grades": {"type": "array", "items": {"$ref": "#/$defs/assessment"}, "minItems": 0, "uniqueItems": true},
+        "counting_evidence_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true},
+        "context_evidence_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true},
+        "counter_evidence_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true},
+        "observation_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true},
+        "units": {"type": "array", "items": {"$ref": "#/$defs/unit"}, "minItems": 0, "uniqueItems": true},
+        "channel_families": {
+          "type": "array",
+          "items": {"$ref": "ux-reader-return.v1.schema.json#/$defs/channelFamily"},
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "organisations": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true},
+        "reasons": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true},
+        "counter_search_required": {"type": "boolean"},
+        "confidence": {"enum": ["high", "medium", null]},
+        "share_basis": {"enum": ["measured", "estimated", "unknown"]},
+        "export_values": {"type": "array", "items": {"$ref": "#/$defs/exportValue"}, "minItems": 0, "uniqueItems": true}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "supported_high"}}, "required": ["status"]},
+          "then": {"properties": {"confidence": {"const": "high"}}}
+        },
+        {
+          "if": {"properties": {"status": {"const": "supported_medium"}}, "required": ["status"]},
+          "then": {"properties": {"confidence": {"const": "medium"}}}
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {"enum": ["single_voice", "lead_only", "conflicting", "needs_product_check", "stale", "unfit"]}
+            },
+            "required": ["status"]
+          },
+          "then": {"properties": {"confidence": {"type": "null"}}}
+        }
+      ]
+    },
+    "exportValue": {
+      "type": "object",
+      "required": [
+        "join",
+        "value",
+        "denominator_evidence_ids",
+        "eligible",
+        "reason_codes",
+        "evidence_ids",
+        "source_ids",
+        "observation_ids",
+        "evidence_kinds",
+        "value_checks"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "join": {"$ref": "ux-reader-return.v1.schema.json#/$defs/join"},
+        "value": {},
+        "denominator_evidence_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true},
+        "eligible": {"type": "boolean"},
+        "reason_codes": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true},
+        "evidence_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true},
+        "source_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true},
+        "observation_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 0, "uniqueItems": true},
+        "evidence_kinds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["evidence_id", "kind"],
+            "additionalProperties": false,
+            "properties": {
+              "evidence_id": {"type": "string", "minLength": 1},
+              "kind": {"enum": ["firsthand", "statistic", "official", "inference"]}
+            }
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "value_checks": {
+          "type": "array",
+          "items": {"$ref": "ux-reader-return.v1.schema.json#/$defs/valueCheck"},
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}

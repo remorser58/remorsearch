@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ux-report-claims.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "report_sha256",
+    "statements"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ux-report-claims.v1"
+    },
+    "report_sha256": {
+      "$ref": "ux-reader-return.v1.schema.json#/$defs/sha256"
+    },
+    "statements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "line_start",
+          "line_end",
+          "text_sha256",
+          "kind",
+          "claim_ids",
+          "reviewed_by",
+          "review_note"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "line_start": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "line_end": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "text_sha256": {
+            "$ref": "ux-reader-return.v1.schema.json#/$defs/sha256"
+          },
+          "kind": {
+            "enum": [
+              "empirical",
+              "hypothesis",
+              "recommendation"
+            ]
+          },
+          "claim_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "reviewed_by": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "review_note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "uniqueItems": true
+    }
+  }
+}

@@ -1,0 +1,414 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/remorser58/Remorsearch_UX_QA_Skill/schemas/ux-research-persona-hypotheses.v1.schema.json",
+  "title": "UX Research Persona Hypotheses v1",
+  "description": "Agent-authored synthetic behavioral persona/scenario hypotheses linked to exact gated research claims. Values are exploratory test conditions, never population statistics.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "bundle_id",
+    "gate_bundle_input_sha256",
+    "authored",
+    "personas"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ux-research-persona-hypotheses.v1"
+    },
+    "bundle_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "gate_bundle_input_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "authored": {
+      "type": "boolean"
+    },
+    "claim_cards": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/claimCard"
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/diagnostic"
+      }
+    },
+    "guidance": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "personas": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/personaHypothesis"
+      }
+    }
+  },
+  "$defs": {
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "reason",
+        "next_step"
+      ],
+      "properties": {
+        "field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "next_step": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "personaHypothesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "persona_id",
+        "label_ko",
+        "situation_ko",
+        "motivation_claim_ids",
+        "authored",
+        "scenario",
+        "assumptions_ko"
+      ],
+      "properties": {
+        "persona_id": {
+          "type": "string",
+          "pattern": "^PER-[A-Za-z0-9_.:-]{1,64}$"
+        },
+        "label_ko": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "situation_ko": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "motivation_claim_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^CLM-[0-9a-f]{8}$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "authored": {
+          "type": "boolean"
+        },
+        "scenario": {
+          "$ref": "#/$defs/scenarioHypothesis"
+        },
+        "assumptions_ko": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "scenarioHypothesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scenario_id",
+        "task_goal_ko",
+        "expected_behavior_ko",
+        "expected_decision_ko",
+        "likely_failure_ko",
+        "falsifying_product_test_ko",
+        "falsifying_interview_question_ko",
+        "priority"
+      ],
+      "properties": {
+        "scenario_id": {
+          "type": "string",
+          "pattern": "^SC-[A-Za-z0-9_.:-]{1,64}$"
+        },
+        "task_goal_ko": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "context_ko": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 600
+        },
+        "concrete_data": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "surface_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "device_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "minItems": 0,
+          "maxItems": 8,
+          "uniqueItems": true
+        },
+        "a11y_conditions": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "zoom",
+              "screen_reader",
+              "external_keyboard",
+              "one_hand"
+            ]
+          },
+          "minItems": 0,
+          "maxItems": 8,
+          "uniqueItems": true
+        },
+        "expected_behavior_ko": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        },
+        "expected_decision_ko": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        },
+        "likely_failure_ko": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        },
+        "falsifying_product_test_ko": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        },
+        "falsifying_interview_question_ko": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        },
+        "priority": {
+          "enum": [
+            "P0",
+            "P1",
+            "P2",
+            "P3"
+          ]
+        }
+      }
+    },
+    "claimCard": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/usableClaimCard"
+        },
+        {
+          "$ref": "#/$defs/blockedClaimCard"
+        }
+      ]
+    },
+    "usableClaimCard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_id",
+        "claim_kind",
+        "statement",
+        "gate_status",
+        "confidence",
+        "counter_search_required",
+        "counter_outcome",
+        "counter_summary",
+        "counting_evidence_ids",
+        "context_evidence_ids",
+        "source_ids",
+        "exportable",
+        "blocked_reason",
+        "counter_call_ids",
+        "counter_evidence_ids",
+        "counter_source_ids"
+      ],
+      "properties": {
+        "claim_id": {
+          "type": "string",
+          "pattern": "^CLM-[0-9a-f]{8}$"
+        },
+        "claim_kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "gate_status": {
+          "enum": [
+            "supported_high",
+            "supported_medium",
+            "single_voice",
+            "lead_only",
+            "conflicting",
+            "needs_product_check",
+            "stale",
+            "unfit"
+          ]
+        },
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            null
+          ]
+        },
+        "counter_search_required": {
+          "type": "boolean"
+        },
+        "counter_outcome": {
+          "enum": [
+            "none_found",
+            "qualifies",
+            "contradicts",
+            null
+          ]
+        },
+        "counter_summary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "counting_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "context_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "exportable": {
+          "const": true
+        },
+        "blocked_reason": {
+          "const": null
+        },
+        "counter_call_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "counter_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "counter_source_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "blockedClaimCard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_id",
+        "gate_status",
+        "exportable",
+        "blocked_reason"
+      ],
+      "properties": {
+        "claim_id": {
+          "type": "string",
+          "pattern": "^CLM-[0-9a-f]{8}$"
+        },
+        "gate_status": {
+          "enum": [
+            "supported_high",
+            "supported_medium",
+            "single_voice",
+            "lead_only",
+            "conflicting",
+            "needs_product_check",
+            "stale",
+            "unfit",
+            null
+          ]
+        },
+        "exportable": {
+          "const": false
+        },
+        "blocked_reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}
